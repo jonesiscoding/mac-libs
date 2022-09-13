@@ -26,6 +26,10 @@ if [ -z "$sourced_lib_root" ]; then
   # Internal Variables
   _libsMacCore_IsJamf=":::_:::"
 
+  # Global Variables
+  # shellcheck disable=SC2164,SC2034
+  libsMacSourcePath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )"
+
   # Set User Based on
   if core::isJamf "$@"; then
     libsMacUser="$3"

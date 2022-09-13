@@ -68,10 +68,12 @@ if [ -z "$sourced_lib_core" ]; then
   # shellcheck disable=SC2034
   sourced_lib_core=0
 
+  # Global Variables
   # shellcheck disable=SC2164,SC2034
-  libsMacSourcePath="$( cd "$(/usr/bin/dirname "$0")" ; /bin/pwd -P )"
+  libsMacSourcePath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )"
   libBinPaths=("/usr/local/sbin" "/usr/local/bin" "/opt/homebrew/sbin" "/opt/homebrew/bin")
-
-  _libsMacCore_Bin=()
   libsMacUser="${USER}"
+
+  # Internal Variables
+  _libsMacCore_Bin=()
 fi
