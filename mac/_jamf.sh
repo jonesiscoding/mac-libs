@@ -15,8 +15,6 @@ function jamf::getApiToken() {
 
   jamfServer=$(jamf::getServer)
   jamfAcct="$_libsMacJamf_Acct"
-
-  # security add-generic-password -a "updater" -s "MDM API" -w "<password>" -T /usr/bin/security /Library/Keychains/System.keychain
   jamfPass=$(/usr/bin/security find-generic-password -w -a "$jamfAcct" -s "MDM API" /Library/Keychains/System.keychain 2> /dev/null)
   jamfToken=""
 
