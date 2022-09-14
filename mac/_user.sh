@@ -16,7 +16,7 @@ function mac::user::appleid() {
 }
 
 function mac::user::console() {
-  show State:/Users/ConsoleUser | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }'
+  echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }'
 }
 
 function mac::user::dir() {
