@@ -3,7 +3,7 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_security" ] && return 0
 
-function mac::mac::isBootstrapTokenEscrow() {
+function mac::mac::isBootstrapTokenEscrowed() {
   local STATUS
 
   STATUS=$(/usr/bin/sudo /usr/bin/profiles status -type bootstraptoken 2>&1)
