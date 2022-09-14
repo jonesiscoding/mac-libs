@@ -1,0 +1,43 @@
+
+{
+  "title": "Econoprint Software Update",
+  "description": "Software Update",
+  "properties": {
+    "allowOverride": {
+      "type": "boolean",
+      "title": "Allow Override Of Profile",
+      "description": "Enabling this allows users on the machine to override the values of this profile when running the update script.",
+      "property_order": 5
+    },
+    "workPath": {
+      "type": "string",
+      "default": "/Library/Application Support/MDM",
+      "description": "The path to use for cached values and logs.",
+      "property_order": 10
+    },
+    "updateTime": {
+      "type": "string",
+      "default": "7pm",
+      "description": "Used in notification messages. The time after which the system will update if signed out.",
+      "property_order": 10
+    },
+    "maxDeferrals": {
+      "type": "integer",
+      "default": "5",
+      "description": "The number of times a user can defer an update via these scripts.",
+      "property_order": 15
+    },
+    "jamfUser": {
+      "type": "string",
+      "default": "updater",
+      "description": "The name of a user who has the proper permissions in the Jamf Pro API to push updates to computers.",
+      "property_order": 20
+    },
+    "jamfId": {
+      "type": "string",
+      "default": "$JSSID",
+      "description": "The ID of the computer in Jamf.  MUST BE LEFT AT DEFAULT!",
+      "property_order": 25
+    }
+  }
+}
