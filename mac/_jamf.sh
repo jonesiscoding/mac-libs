@@ -3,8 +3,8 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_jamf" ] && return 0
 
-# shellcheck source=./../io/_output.sh
-source "$libSourcePath/io/_output.sh"
+# shellcheck source=../io/_output.sh
+source "$libsMacSourcePath/io/_output.sh"
 
 function jamf::getServer() {
   /usr/bin/defaults read /Library/Preferences/com.jamfsoftware.jamf.plist jss_url
