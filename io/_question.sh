@@ -1,4 +1,19 @@
 #!/bin/bash
+# /*
+#   Module:
+#     Contains functions to allow for easy questions/answers in any bash script.
+#
+#   Example:
+#     source "<path-to-mac-libs>/io/_question.sh"
+#     <various code>
+#     <see function examples>
+#
+#   Copyright:
+#     © 2022/09 AMJones <am@jonesiscoding.com>
+#   License:
+#     For the full copyright and license information, please view the LICENSE
+#     file that was distributed with this source code.
+# */
 
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_question" ] && return 0
@@ -8,6 +23,19 @@ if [ -z "$sourced_lib_output" ]; then
   source "$libSourcePath/io/_output.sh"
 fi
 
+# /*!
+#   Public: Outputs question text in yellow, and returns the appropriate code
+#   based on the user's answer.
+#
+#   Example:
+#     if question::ask "Is your favorite color yellow?"; then
+#        <code for yellow>
+#     else
+#        <code for other colors>
+#     fi
+#
+#   $1  The question
+# */
 function question::ask() {
   local reply
 
@@ -19,6 +47,15 @@ function question::ask() {
   esac
 }
 
+# /*!
+#   Public: Outputs question text in yellow, and waits for the user to type a reply
+#   followed by the enter key.
+#
+#   Example:
+#     response=$(question::text "What is your quest?")
+#
+#   $1  The question
+# */
 function question::text() {
   local ANSWER
   local QUESTION
@@ -33,6 +70,16 @@ function question::text() {
   return 0
 }
 
+# /*!
+#   Public: Outputs question text in yellow, with the choices printed above.
+#
+#   Example:
+#     choices=("African" "European")
+#     answer=$(question::choice "Which kind of swallow is it?" "African European"; then
+#
+#   $1  The question string
+#   $2  The selections, enclosed in quotes, space delimited
+# */
 function question::choice() {
   local choice
   local choices
@@ -47,6 +94,9 @@ function question::choice() {
   return 0
 }
 
+#
+# Initialization Code
+#
 if [ -z "$sourced_lib_question" ]; then
   # shellcheck disable=SC2034
   sourced_lib_question=0
