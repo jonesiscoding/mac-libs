@@ -79,7 +79,7 @@ function mac::files::user::mkdir() {
     fi
   fi
 
-  if ! user::chown "$DIR"; then
+  if ! mac::files::user::chown "$DIR"; then
     return 1
   fi
 
@@ -105,7 +105,7 @@ function mac::files::user::touch() {
       return 1
     fi
 
-    if ! user::chown "$TFILE"; then
+    if ! mac::files::user::chown "$TFILE"; then
       return 1
     fi
   fi
