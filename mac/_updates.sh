@@ -166,7 +166,7 @@ function mac::updates::defer::allowed() {
 
   deferrals=$(mac::updates::defer::count)
 
-  if [ "$deferrals" -le "$_libsMacUpdates_MaxDeferrals" ]; then
+  if [ "$deferrals" -le "$libsMacUpdatesMaxDeferrals" ]; then
     return 0
   else
     return 1
@@ -191,22 +191,18 @@ if [ -z "$sourced_lib_mac_updates" ]; then
     fi
   fi
 
-  if [ -n "$libsMacUpdatesMaxDeferrals" ]; then
-    _libsMacUpdates_MaxDeferrals="$libsMacUpdatesMaxDeferrals"
+  if [ -n "$libsMacUpdatesPlist" ] && [ -f "$libsMacUpdatesPlist" ]; then
+    libsMacUpdatesMaxDeferrals=$(/usr/bin/defaults read "$libsMacUpdatesPlist" "maxDeferrals")
+  elif [ ! -f "$libsMacUpdatesPlist" ]; then
+    echo "ERROR: $libsMacUpdatesPlist does not exist."
+    exit 44
   else
-    if [ -n "$libsMacUpdatesPlist" ] && [ -f "$libsMacUpdatesPlist" ]; then
-      _libsMacUpdates_MaxDeferrals=$(/usr/bin/defaults read "$libsMacUpdatesPlist" "maxDeferrals")
-    elif [ ! -f "$libsMacUpdatesPlist" ]; then
-      echo "ERROR: $libsMacUpdatesPlist does not exist."
-      exit 44
-    else
-      echo "ERROR: You must declare \$libsMacUpdatesPlist or \$libsMacUpdatesMaxDeferrals before sourcing _updates.sh"
-      exit 44
-    fi
+    echo "ERROR: You must declare \$libsMacUpdatesPlist or \$libsMacUpdatesMaxDeferrals before sourcing _updates.sh"
+    exit 44
   fi
 
-  _libsMacUpdates_DeferralPath="$_libsMacUpdates_WorkPath/deferral.count"
   [ ! -d "$_libsMacUpdates_WorkPath" ] && /bin/mkdir -p "$_libsMacUpdates_WorkPath"
+  _libsMacUpdates_DeferralPath="$_libsMacUpdates_WorkPath/deferral.count"
   /usr/bin/touch "$_libsMacUpdates_DeferralPath"
   _libsMacUpdates_outputRaw=""
   _libsMacUpdates_CatalogUrl=""
