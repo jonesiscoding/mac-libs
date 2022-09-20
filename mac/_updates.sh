@@ -62,11 +62,11 @@ function _getUpdates() {
   if [ -z "$_libsMacUpdates_outputRaw" ]; then
     # Delete cached data older than 30 min
     cwd="$(/bin/pwd)"
-    cd "$_libsMacUpdates_WorkPath" || exit 1
+    cd "$_libsMacMdm_WorkDir" || exit 1
     /usr/bin/find . -type f -name 'updates.txt' -mmin +30 -delete
     cd "$cwd" || exit 1
-    if [ ! -f "$_libsMacUpdates_WorkPath/updates.txt" ]; then
-      /usr/sbin/softwareupdate --list --all >>"$_libsMacUpdates_WorkPath"/updates.txt 2>&1 &
+    if [ ! -f "$_libsMacMdm_WorkDir/updates.txt" ]; then
+      /usr/sbin/softwareupdate --list --all >>"$_libsMacMdm_WorkDir"/updates.txt 2>&1 &
       updatePid=$!
       for i in {1..180}
       do
@@ -78,8 +78,8 @@ function _getUpdates() {
       done
     fi
 
-    touch "$_libsMacUpdates_WorkPath/updates.txt"
-    _libsMacUpdates_outputRaw=$(/bin/cat "$_libsMacUpdates_WorkPath/updates.txt")
+    touch "$_libsMacMdm_WorkDir/updates.txt"
+    _libsMacUpdates_outputRaw=$(/bin/cat "$_libsMacMdm_WorkDir/updates.txt")
   fi
 
   echo "$_libsMacUpdates_outputRaw"
@@ -130,7 +130,7 @@ function mac::updates::catalogUrl() {
 function mac::updates::defer::increment() {
   local deferrals
 
-  [ ! -d "$_libsMacUpdates_WorkPath" ] && /bin/mkdir -p "$_libsMacUpdates_WorkPath"
+  [ ! -d "$_libsMacMdm_WorkDir" ] && /bin/mkdir -p "$_libsMacMdm_WorkDir"
   touch "${_libsMacUpdates_DeferralPath}"
   # shellcheck disable=SC2155
   typeset -i deferrals=$(/bin/cat "${_libsMacUpdates_DeferralPath}")
@@ -146,7 +146,7 @@ function mac::updates::defer::count() {
 
   deferralFile="$_libsMacUpdates_DeferralPath"
 
-  [ ! -d "$_libsMacUpdates_WorkPath" ] && /bin/mkdir -p "$_libsMacUpdates_WorkPath"
+  [ ! -d "$_libsMacMdm_WorkDir" ] && /bin/mkdir -p "$_libsMacMdm_WorkDir"
   touch "${deferralFile}"
   # shellcheck disable=SC2155
   typeset -i deferrals=$(cat "${deferralFile}")
@@ -177,35 +177,36 @@ if [ -z "$sourced_lib_mac_updates" ]; then
   # shellcheck disable=SC2034
   sourced_lib_mac_updates=0
 
-  if [ -n "$libsMacUpdatesWorkPath" ]; then
-    _libsMacUpdates_WorkPath="$libsMacUpdatesWorkPath"
-  else
-    if [ -n "$libsMacUpdatesPlist" ] && [ -f "$libsMacUpdatesPlist" ]; then
-      _libsMacUpdates_WorkPath=$(/usr/bin/defaults read "$libsMacUpdatesPlist" "workPath")
-    elif [ ! -f "$libsMacUpdatesPlist" ]; then
-      echo "ERROR: $libsMacUpdatesPlist does not exist."
-      exit 44
-    else
-      echo "ERROR: You must declare \$libsMacUpdatesPlist or \$libsMacUpdatesWorkPath before sourcing _updates.sh"
-      exit 44
-    fi
-  fi
-
-  if [ -n "$libsMacUpdatesPlist" ] && [ -f "$libsMacUpdatesPlist" ]; then
-    libsMacUpdatesMaxDeferrals=$(/usr/bin/defaults read "$libsMacUpdatesPlist" "maxDeferrals")
-  elif [ ! -f "$libsMacUpdatesPlist" ]; then
-    echo "ERROR: $libsMacUpdatesPlist does not exist."
-    exit 44
-  else
-    echo "ERROR: You must declare \$libsMacUpdatesPlist or \$libsMacUpdatesMaxDeferrals before sourcing _updates.sh"
-    exit 44
-  fi
-
-  [ ! -d "$_libsMacUpdates_WorkPath" ] && /bin/mkdir -p "$_libsMacUpdates_WorkPath"
-  _libsMacUpdates_DeferralPath="$_libsMacUpdates_WorkPath/deferral.count"
-  /usr/bin/touch "$_libsMacUpdates_DeferralPath"
-  _libsMacUpdates_outputRaw=""
-  _libsMacUpdates_CatalogUrl=""
+  # Global Variables
+  [ -z "$libsMacBundlePrefix" ] && libsMacBundlePrefix="org.organization"
   # shellcheck disable=SC2034
   libsMacParsedUpdates=()
+
+  # Internal Variables
+  _libsMacMdm_Domain="$libsMacBundlePrefix.softwareupdate"
+  _libsMacMdm_Plist="/Library/Managed Preferences/${_libsMacMdm_Domain}.plist"
+  _libsMacUpdates_outputRaw=""
+  _libsMacUpdates_CatalogUrl=""
+
+  # Managed Preferences
+  if [ -f "$_libsMacMdm_Plist" ]; then
+    _libsMacMdm_Override=$(/usr/bin/defaults read "$_libsMacMdm_Plist" allowOverride 2>/dev/null || echo "0")
+    libsMacUpdatesMaxDeferrals=$(/usr/bin/defaults read "$_libsMacMdm_Plist" maxDeferrals 2>/dev/null || echo "7")
+    updateTime=$(/usr/bin/defaults read "$_libsMacMdm_Plist" updateTime 2>/dev/null || echo "7pm")
+    _libsMacMdm_WorkDir=$(/usr/bin/defaults read "$_libsMacMdm_Plist" workPath 2>/dev/null || echo "/Library/Application\ Support/MDM")
+    _libsMacUpdates_DeferralPath="$_libsMacMdm_WorkDir/deferral.count"
+
+    # Make Sure Work Dir Exists, Deferrals File Exists
+    [ ! -d "$_libsMacMdm_WorkDir" ] && /bin/mkdir -p "$_libsMacMdm_WorkDir"
+    /usr/bin/touch "$_libsMacUpdates_DeferralPath"
+  else
+    echo "ERROR: Managed preferences ${_libsMacMdm_Domain} are not available.  Please contact an IS staff member."
+    exit 1
+  fi
+
+  # Allow Overrides
+  if [ "$_libsMacMdm_Override" -eq "1" ]; then
+    [ -n "$libsMacMdmWorkDir" ] && _libsMacMdm_WorkDir="$libsMacMdmWorkDir"
+    [ -n "$libsMacUpdatesMaxDeferrals" ] && _libsMacUpdates_MaxDeferrals="$libsMacUpdatesMaxDeferrals"
+  fi
 fi
