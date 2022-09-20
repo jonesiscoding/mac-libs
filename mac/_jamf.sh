@@ -137,6 +137,7 @@ function jamf::assert() {
   fi
 
   "$_libsMacJamf_Helper" -windowType hud -lockHUD -title "$title" -heading "$heading" -description "$message" -icon "$icon" &
+  disown
 }
 
 function jamf::countdown() {
@@ -156,6 +157,7 @@ function jamf::countdown() {
   fi
 
   "$_libsMacJamf_Helper" -windowType hud -lockHUD -title "$title" -heading "$heading" -description "$message" -icon "$icon" -timeout "$timeout" -countdown &
+  disown
 }
 
 function jamf::notify() {
@@ -174,6 +176,7 @@ function jamf::notify() {
   fi
 
   "$_libsMacJamf_Helper" -windowType hud -title "$title" -heading "$heading" -description "$message" -icon "$icon" &
+  disown
 }
 
 function jamf::alert() {
