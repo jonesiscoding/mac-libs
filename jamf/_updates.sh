@@ -13,6 +13,36 @@ function jamf::updates::server() {
   /usr/bin/defaults read /Library/Preferences/com.jamfsoftware.jamf.plist jss_url
 }
 
+# /*!
+#   Public: Retrieves this computer's ID in Jamf
+# */
+function jamf::updates::id() {
+  echo "$_libsMacJamf_SystemId"
+}
+
+# /*!
+#   Public: Evaluates whether this system is configured to send updates via Jamf
+# */
+function jamf::updates::isConfigured() {
+  local jamfPass bsToken
+
+  [ -z "$(jamf::updates::server)" ] && updateBlock="No Jamf Pro Server Found" && return 1
+  [ -z "$(jamf::updates::id)" ] && updateBlock="No Jamf Pro System ID configured." && return 1
+  [ -z "$_libsMacJamf_UpdateUser" ] && updateBlock="No Jamf Pro API User configured." && return 1
+
+  # Check on Password
+  jamfPass=$(/usr/bin/security find-generic-password -w -a "$_libsMacJamf_UpdateUser" -s "MDM API" /Library/Keychains/System.keychain 2> /dev/null)
+  [ -z "$jamfPass" ] && updateBlock="No Password Saved in System Keychain for Jamf Pro API User" && return 1
+
+  # Bootstrap Token
+  bsToken=$(/usr/bin/sudo /usr/bin/profiles status -type bootstraptoken 2>&1)
+  if echo "$bsToken" | /usr/bin/grep -q "Error:" || echo "$bsToken" | /usr/bin/grep -q "NO" || ! echo "$bsToken" | /usr/bin/grep -q "YES"; then
+    updateBlock="No Bootstrap Token Escrowed in Jamf" && return 1
+  fi
+
+  return 0
+}
+
 
 # /*!
 #   Public: Retrieves a token for the Jamf API using the update user, and a password retrieved from
