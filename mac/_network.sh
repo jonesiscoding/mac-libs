@@ -33,6 +33,10 @@ function mac::network::getWiFiInterfaces() {
   return 0
 }
 
+function mac::network::getWiFiSSID() {
+  /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -I  | /usr/bin/awk -F' SSID: '  '/ SSID: / {print $2}'
+}
+
 function mac::network::getWiredInterfaces() {
   local interfaces
 
@@ -198,15 +202,13 @@ function _isWiFiInterface() {
 # Initialization Code
 #
 
-# Prevent Sourcing Multiple Times
 if [ -z "$sourced_lib_mac_network" ]; then
   # shellcheck disable=SC2034
   sourced_lib_mac_network=0
+  # Internal Variables Below
   _libsMacNetwork_Bluetooth=()
   _libsMacNetwork_Vpn=()
   _libsMacNetwork_Wifi=()
   _libsMacNetwork_Wired=()
 fi
-
-# Internal Variables Below
 
