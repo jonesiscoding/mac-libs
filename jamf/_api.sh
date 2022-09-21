@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_jamf_api" ] && return 0
 

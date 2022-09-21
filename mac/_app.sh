@@ -1,20 +1,73 @@
 #!/bin/bash
 
+# /*
+#   Module:
+#     Contains functions to allow for retrieval of information about installed app bundles.
+#
+#   Example:
+#     source "<path-to-mac-libs>/mac/_app.sh"
+#
+#     See functions for additional examples
+#
+#   Copyright:
+#     © 2022/09 AMJones <am@jonesiscoding.com>
+#   License:
+#     For the full copyright and license information, please view the LICENSE
+#     file that was distributed with this source code.
+# */
+
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_app" ] && return 0
 
+# /*!
+#   Public: Retrieves the name from the given app bundle
+#
+#   Example:
+#     name=$(mac::app::getName /Applications/iTerm.app)
+#
+#   $1 The absolute path to the application bundle.
+# */
 function mac::app::getName() {
   _getPlistValue "$1" CFBundleName
 }
 
+# /*!
+#   Public: Retrieves the bundle ID from the given app bundle
+#
+#   Example:
+#     bundleId=$(mac::app::getBundleId /Applications/iTerm.app)
+#
+#   $1 The absolute path to the application bundle.
+# */
 function mac::app::getBundleId() {
   /usr/bin/mdls -n kMDItemCFBundleIdentifier -r "$1"
 }
 
+# /*!
+#   Public: Retrieves the (short) version from the given app bundle
+#
+#   Example:
+#     version=$(mac::app::getVersion /Applications/iTerm.app)
+#
+#   $1 The absolute path to the application bundle.
+# */
 function mac::app::getVersion() {
   _getPlistValue "$1" CFBundleShortVersionString
 }
 
+# /*!
+#   Public: Sets the given app as the default app for the given extension
+#
+#   Example:
+#     mac::app::setDefaultForExtension "/Applications/Visual Studio Code.app" "js"
+#     name=$(mac::app::getName /Applications/iTerm.app)
+#
+#   Dependency:
+#     duti (https://github.com/moretension/duti)
+#
+#   $1 The Extension
+#   $2 The absolute path to the application bundle.
+# */
 function mac::app::setDefaultForExtension() {
   local app ext uti bundle duti
 
@@ -35,6 +88,17 @@ function mac::app::setDefaultForExtension() {
   fi
 }
 
+# /*!
+#   Public: Gets the UTI for the given extension, from a limited number of known UTIs.
+#
+#   Example:
+#     jsUti=$(mac::app::getUti js)
+#
+#   Dependency:
+#     jq (https://stedolan.github.io/jq/)
+#
+#   $1 The Extension
+# */
 function mac::app::getUti() {
   local ext uti pathJQ
 
@@ -51,6 +115,14 @@ function mac::app::getUti() {
   return 1
 }
 
+# /*!
+#   Private: Gets the path to the Info.plist from the given application bundle and verifies that it exists.
+#
+#   Example:
+#     plist=$(_getPlist /Applications/iTerm.app)
+#
+#   $1 The absolute path to the application bundle
+# */
 function _getPlist() {
   local plist
 
@@ -60,6 +132,15 @@ function _getPlist() {
   return 1
 }
 
+# /*!
+#   Public: Retrieves value of the given key from the plist of the given application bundle.
+#
+#   Example:
+#     value=$(_getPlist /Applications/iTerm.app CFBundleName)
+#
+#   $1 The absolute path to the application bundle
+#   $2 The key to retreive
+# */
 function _getPlistValue() {
   local app key plist value
 
@@ -73,6 +154,9 @@ function _getPlistValue() {
   echo "$value"
 }
 
+#
+# Initialization Code for App Module
+#
 if [ -z "$sourced_lib_mac_app" ]; then
   # shellcheck disable=SC2034
   sourced_lib_mac_app=0
