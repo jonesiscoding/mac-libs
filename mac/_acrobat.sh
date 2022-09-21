@@ -60,14 +60,10 @@ function acrobat::path() {
 #     duti (https://github.com/moretension/duti)
 # */
 function acrobat::getPdfHandler() {
-  local pathDuti edition aPath bundleId
+  local pathDuti
 
   dependency::assert "duti"
   pathDuti=$(dependency::path duti)
-
-  edition="$1"
-  aPath=$(acrobat::path "$edition")
-  bundleId=$(/usr/bin/mdls -n kMDItemCFBundleIdentifier -r "$aPath")
 
   "$pathDuti" -x "com.adobe.pdf" | grep ".app" | tail -1
 }
