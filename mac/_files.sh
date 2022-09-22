@@ -1,8 +1,32 @@
 #!/bin/bash
 
+# /*
+#   Module:
+#     Contains functions to allow for easier manipulation of the file system.  Note that all functions within the
+#     mac::files::user namespace utilize the global $libsMacUser for the referenced user.
+#
+#     This user is populated by sourcing _core.sh and/or _root.sh.  Please see those modules for additional information.
+#
+#   Example:
+#     source "<path-to-mac-libs>/mac/_files.sh"
+#
+#   Copyright:
+#     © 2022/09 AMJones <am@jonesiscoding.com>
+#
+#   License:
+#     For the full copyright and license information, please view the LICENSE
+#     file that was distributed with this source code.
+# */
+
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_files" ] && return 0
 
+
+# /*!
+#   Internal: Retrieves the group for the given directory or file
+#
+#   $1 The directory or file to retrieve the group for
+# */
 _group() {
   local TGROUP
   local REF
@@ -22,6 +46,11 @@ _group() {
   return 1
 }
 
+# /*!
+#   Internal: Retrieves the owner for the given directory or file
+#
+#   $1 The directory or file to retrieve the owner for
+# */
 _owner() {
   local TOWNER
   local REF
@@ -41,6 +70,19 @@ _owner() {
   return 1
 }
 
+# /*!
+#   Public: Sets the ownership of the given file or directory to the script user.  The script user is defined
+#   in _core.sh or _root.sh. Please see these scripts for details.
+#
+#   Example:
+#     if mac::files::user::chown $dirPath; then
+#       <code for positive result>
+#     else
+#       <code for negative result>
+#     fi
+#
+#   $1 The path to change the ownership of.
+# */
 function mac::files::user::chown() {
   local OWNER
   local GROUP
@@ -63,6 +105,19 @@ function mac::files::user::chown() {
   return 0
 }
 
+# /*!
+#   Public: Makes the given directory and sets ownership to the user referenced by $libsMacUser. This variable
+#   is defined in _core.sh or _root.sh.  Please see these scripts for details.
+#
+#   Example:
+#     if mac::files::user::chown $dirPath; then
+#       <code for positive result>
+#     else
+#       <code for negative result>
+#     fi
+#
+#   $1 The directory path to create
+# */
 function mac::files::user::mkdir() {
   local DIR
   DIR="$1"
@@ -86,26 +141,39 @@ function mac::files::user::mkdir() {
   return 0
 }
 
+# /*!
+#   Public: Verifies that the parent directory exists, then touches (or creates) the given file path, changing
+#   ownership to the user referenced by $libsMacUser.
+#
+#   Example:
+#     if mac::files::user::touch $filePath; then
+#       <code for positive result>
+#     else
+#       <code for negative result>
+#     fi
+#
+#   $1 The file path to create
+# */
 function mac::files::user::touch() {
-  local PARENT
-  local TFILE
-  TFILE="$1"
+  local parentDirectory
+  local theFile
+  theFile="$1"
 
-  if [ ! -f "$TFILE" ]; then
-    PARENT=$(/usr/bin/dirname "$TFILE")
-    if [ ! -d "$PARENT" ]; then
-      if ! /bin/mkdir -p "$PARENT"; then
-        echo "ERROR: Cannot create directory '$PARENT'."
+  if [ ! -f "$theFile" ]; then
+    parentDirectory=$(/usr/bin/dirname "$theFile")
+    if [ ! -d "$parentDirectory" ]; then
+      if ! /bin/mkdir -p "$parentDirectory"; then
+        echo "ERROR: Cannot create directory '$parentDirectory'."
         return 1
       fi
     fi
 
-    if ! /usr/bin/touch "$TFILE"; then
-      echo "ERROR: Could not create file '$TFILE'."
+    if ! /usr/bin/touch "$theFile"; then
+      echo "ERROR: Could not create file '$theFile'."
       return 1
     fi
 
-    if ! mac::files::user::chown "$TFILE"; then
+    if ! mac::files::user::chown "$theFile"; then
       return 1
     fi
   fi
@@ -113,7 +181,13 @@ function mac::files::user::touch() {
   return 0
 }
 
+#
+# Internal Variable Initialization
+#
 if [ -z "$sourced_lib_mac_files" ]; then
   # shellcheck disable=SC2034
   sourced_lib_mac_files=0
+
+  # Fallback for the initialization of this variable. Developer should have sourced _core.sh and/or _root.sh already.
+  [ -z "$libsMacUser" ] && libsMacUser="${USER}"
 fi
