@@ -1,0 +1,6 @@
+{
+  "name": "mac-libs",
+  "version": "1.0.0",
+  "install": "rsync -a --ignore-times --delete ./ --exclude \"./.*\" --exclude \"*.json\" --exclude \"resources/\" \"${PREFIX:-/usr/local}/sbin/lib/mac-libs/\" && find ${PREFIX:-/usr/local}/sbin/lib/mac-libs/*.sh -exec chmod 755 \"{}\" \\;",
+  "global": true
+}
