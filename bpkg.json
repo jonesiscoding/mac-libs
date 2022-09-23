@@ -3,5 +3,5 @@
   "version": "0.1.0",
   "description": "Bash libraries for macOS administration scripts.",
   "global": true,
-  "install": "mkdir -p ${PREFIX:-/usr/local}/sbin/lib && rsync -a --ignore-times --delete --exclude ./.* --exclude *.json --exclude resources/ $(pwd)/ ${PREFIX:-/usr/local}/sbin/lib/mac-libs/"
+  "install": "mkdir -p ${PREFIX:-/usr/local}/sbin/lib && rsync -a --ignore-times --delete --exclude \".*\" --exclude \"*.json\" --exclude resources/ $(pwd)/ ${PREFIX:-/usr/local}/sbin/lib/mac-libs/"
 }
