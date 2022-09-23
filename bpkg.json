@@ -1,6 +1,8 @@
 {
   "name": "mac-libs",
-  "version": "1.0.0",
-  "install": "rsync -a --ignore-times --delete ./ --exclude \"./.*\" --exclude \"*.json\" --exclude \"resources/\" \"${PREFIX:-/usr/local}/sbin/lib/mac-libs/\" && find ${PREFIX:-/usr/local}/sbin/lib/mac-libs/*.sh -exec chmod 755 \"{}\" \\;",
-  "global": true
+  "version": "0.1.0",
+  "description": "Bash libraries for macOS administration scripts.",
+  "global": "1",
+  "install": "mkdir -p ${PREFIX:-/usr/local}/sbin/lib && rsync -a --ignore-times --delete ./ --exclude ./.* --exclude *.json --exclude resources/ /usr/local/sbin/lib/mac-libs/ && find /usr/local/sbin/lib/mac-libs/*.sh -exec chmod 755 '{}' \\;",
+  "scripts": [ "_core.sh, _root.sh" ]
 }
