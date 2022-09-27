@@ -44,6 +44,20 @@ function mac::hardware::isAppleSilicon() {
 }
 
 # /*!
+#   Public: Evaluates whether this device is a MacBook
+#
+#   Example:
+#     if mac::hardware::isMacBook; then
+#       <code to run if a MacBook>
+#     else
+#       <code to run if not a MacBook>
+#     fi
+# */
+function mac::hardware::isMacBook() {
+  mac::hardware::model | /usr/bin/grep -q "MacBook"
+}
+
+# /*!
 #   Public: Evaluates whether this Mac contains a T2 Security Chip.  The value is then cached to prevent additional
 #   overhead in using the function repeatedly.
 #
@@ -71,6 +85,20 @@ function mac::hardware::isT2() {
   return 1
 }
 
+# /*!
+#   Public: Retrieves the model name of this Mac
+#
+#   Example:
+#     model=$(mac::hardware::model)
+# */
+function mac::hardware::model() {
+  if [ -z "$_libsMacHardware_Model" ]; then
+    _libsMacHardware_Model=$(/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/grep "Model Name" | /usr/bin/rev | /usr/bin/cut -d':' -f1 | /usr/bin/rev | /usr/bin/sed -e 's/^[[:space:]]*//')
+  fi
+
+  echo "$_libsMacHardware_Model"
+}
+
 #
 # Initialization Code
 #
@@ -81,4 +109,5 @@ if [ -z "$sourced_lib_mac_hardware" ]; then
   # Internal Variables
   _libsMacHardware_Arch=""
   _libsMacHardware_T2=""
+  _libsMacHardware_Model=""
 fi
