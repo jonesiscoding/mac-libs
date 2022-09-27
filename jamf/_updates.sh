@@ -161,14 +161,23 @@ if [ -z "$sourced_lib_jamf_updates" ]; then
   _libsMacMdm_Domain="$libsMacBundlePrefix.softwareupdate"
   _libsMacMdm_Plist="/Library/Managed Preferences/${_libsMacMdm_Domain}.plist"
 
-  # Jamf API Account Username
   if [ -n "$_libsMacMdm_Plist" ] && [ -f "$_libsMacMdm_Plist" ]; then
+    # Are Overrides Allowed?
+    _libsMacMdm_Override=$(/usr/bin/defaults read "$_libsMacMdm_Plist" allowOverride 2>/dev/null || echo "0")
+    # Jamf API Account Username
     _libsMacJamf_UpdateUser=$(/usr/bin/defaults read "$_libsMacMdm_Plist" "jamfUser" 2>/dev/null)
+    # Jamf API System ID
+    _libsMacJamf_SystemId=$(/usr/bin/defaults read "$_libsMacMdm_Plist" "jamfId" 2>/dev/null)
+    # Work Directory
+    _libsMacMdm_WorkDir=$(/usr/bin/defaults read "$_libsMacMdm_Plist" workPath 2>/dev/null || echo "/Library/Application\ Support/MDM")
+  else
+    echo "ERROR: Managed preferences ${_libsMacMdm_Domain} are not available.  Please contact an IS staff member."
+    exit 1
   fi
 
-  # Jamf API System ID
-  if [ -n "$_libsMacMdm_Plist" ] && [ -f "$_libsMacMdm_Plist" ]; then
-    _libsMacJamf_SystemId=$(/usr/bin/defaults read "$_libsMacMdm_Plist" "jamfId" 2>/dev/null)
+  # Allow Overrides
+  if [ "$_libsMacMdm_Override" -eq "1" ]; then
+    [ -n "$libsMacMdmWorkDir" ] && _libsMacMdm_WorkDir="$libsMacMdmWorkDir"
   fi
 fi
 
