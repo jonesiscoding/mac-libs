@@ -15,7 +15,7 @@ function jamf::output::ask() {
 
   title="$1"
   heading="$2"
-  question="$3"
+  question=$(echo -e "$3")
   buttonYes="${4:-Yes}"
   buttonNo="${5:-No}"
   icon="${6:-/Applications/Self Service.app/Contents/Resources/AppIcon.icns}"
@@ -45,7 +45,7 @@ function jamf::output::assert() {
 
   title="$1"
   heading="$2"
-  message="$3"
+  message=$(echo -e "$3")
   icon="${4:-/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns}"
   [ ! -f "$icon" ] && icon="$_libsMacJamf_IconDefault"
 
@@ -74,7 +74,7 @@ function jamf::output::countdown() {
 
   title="$1"
   heading="$2"
-  message="$3"
+  message=$(echo -e "$3")
   icon="${4:-/Applications/Self Service.app/Contents/Resources/AppIcon.icns}"
   timeout="${5:-300}"
   [ ! -f "$icon" ] && icon="$_libsMacJamf_IconDefault"
@@ -101,7 +101,7 @@ function jamf::output::notify() {
 
   title="$1"
   heading="$2"
-  message="$3"
+  message=$(echo -e "$3")
   icon="${4:-/Applications/Self Service.app/Contents/Resources/AppIcon.icns}"
   [ ! -f "$icon" ] && icon="$_libsMacJamf_IconDefault"
 
