@@ -43,7 +43,7 @@ function mac::user::focus() {
 }
 
 function mac::user::forceLogout() {
-  if /bin/launchctl asuser "$(user::id)" sudo -iu "$(user::username)" /usr/bin/osascript -e \'tell app "System Events" to log out\'; then
+  if /bin/launchctl asuser "$(mac::user::id)" sudo -iu "$(mac::user::username)" /usr/bin/osascript -e \'tell app "System Events" to log out\'; then
     /bin/sleep 5
     return 0
   else
