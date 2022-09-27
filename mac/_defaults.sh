@@ -58,6 +58,10 @@ function defaults::user::read() {
   fi
 }
 
+function defaults::user::readArray() {
+  defaults::user::read "$1" "$2" 2> /dev/null | /usr/bin/grep -wv -e '(' -e ')' | /usr/bin/rev | /usr/bin/cut -d',' -f2 | /usr/bin/cut -d' ' -f1 | /usr/bin/rev
+}
+
 function defaults::user::write() {
   local DOMAIN
   local KEY
