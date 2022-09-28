@@ -3,7 +3,7 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_security" ] && return 0
 
-function mac::mac::isBootstrapTokenEscrowed() {
+function os::security::isBootstrapTokenEscrowed() {
   local STATUS
 
   STATUS=$(/usr/bin/sudo /usr/bin/profiles status -type bootstraptoken 2>&1)
@@ -19,7 +19,7 @@ function mac::mac::isBootstrapTokenEscrowed() {
   return 1
 }
 
-function mac::isEncryptingFileVault() {
+function os::security::isEncryptingFileVault() {
   [ -f /usr/bin/fdesetup ] && /usr/bin/fdesetup status | /usr/bin/grep -q 'Encryption in progress'
 }
 

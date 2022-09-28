@@ -8,7 +8,7 @@ A library of common reusable bash functions to assist in the management of macOS
 
 #### For Scripts Run as Root
 
-For scripts where the functionality is designed to be run as root or other admin user, but should affect the current console user, or a another user passed via MDM, you should source `root.sh` to ensure that the user functions are run for the correct user.
+For scripts where the functionality is designed to be run as root or other admin user, but should affect the current console user, or another user passed via MDM, you should source `root.sh` to ensure that the user functions are run for the correct user.
 
 ### User Reference
 

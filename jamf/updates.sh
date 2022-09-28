@@ -3,8 +3,8 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_jamf_updates" ] && return 0
 
-# shellcheck source=../io/_output.sh
-source "$libsMacSourcePath/io/_output.sh"
+# shellcheck source=../output/output.sh
+source "$libsMacSourcePath/output/output.sh"
 
 # /*!
 #   Public: Retrieves the URL to the Mac's Jamf Server
@@ -23,6 +23,7 @@ function jamf::updates::id() {
 # /*!
 #   Public: Evaluates whether this system is configured to send updates via Jamf
 # */
+# shellcheck disable=SC2034
 function jamf::updates::isConfigured() {
   local jamfPass bsToken
 

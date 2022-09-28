@@ -85,7 +85,7 @@ function _getUpdates() {
   echo "$_libsMacUpdates_outputRaw"
 }
 
-function mac::updates::populate() {
+function os::updates::populate() {
   local lines
   local updateLineArr
   local line
@@ -122,12 +122,12 @@ function mac::updates::populate() {
   fi
 }
 
-function mac::updates::catalogUrl() {
+function os::updates::catalogUrl() {
   [ -z "$_libsMacUpdates_CatalogUrl" ] && _libsMacUpdates_CatalogUrl=$(/usr/bin/defaults read "/Library/Managed Preferences/com.apple.SoftwareUpdate" CatalogURL 2>"/dev/null")
   echo "$_libsMacUpdates_CatalogUrl"
 }
 
-function mac::updates::defer::increment() {
+function os::updates::defer::increment() {
   local deferrals
 
   [ ! -d "$_libsMacMdm_WorkDir" ] && /bin/mkdir -p "$_libsMacMdm_WorkDir"
@@ -140,7 +140,7 @@ function mac::updates::defer::increment() {
   echo $deferrals
 }
 
-function mac::updates::defer::count() {
+function os::updates::defer::count() {
   local deferrals
   local deferralFile
 
@@ -155,16 +155,16 @@ function mac::updates::defer::count() {
   echo $deferrals
 }
 
-function mac::updates::defer::clear() {
+function os::updates::defer::clear() {
   [ -f "$_libsMacUpdates_DeferralPath" ] && rm "$_libsMacUpdates_DeferralPath" && touch "$_libsMacUpdates_DeferralPath"
 
   return 0
 }
 
-function mac::updates::defer::allowed() {
+function os::updates::defer::allowed() {
   local deferrals
 
-  deferrals=$(mac::updates::defer::count)
+  deferrals=$(os::updates::defer::count)
 
   if [ "$deferrals" -le "$libsMacUpdatesMaxDeferrals" ]; then
     return 0

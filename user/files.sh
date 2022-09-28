@@ -3,12 +3,12 @@
 # /*
 #   Module:
 #     Contains functions to allow for easier manipulation of the file system.  Note that all functions within the
-#     mac::files::user namespace utilize the global $libsMacUser for the referenced user.
+#     user::files namespace utilize the global $libsMacUser for the referenced user.
 #
 #     This user is populated by sourcing _core.sh and/or _root.sh.  Please see those modules for additional information.
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_files.sh"
+#     source "<path-to-os-libs>/os/files.sh"
 #
 #   Copyright:
 #     © 2022/09 AMJones <am@jonesiscoding.com>
@@ -75,7 +75,7 @@ _owner() {
 #   in _core.sh or _root.sh. Please see these scripts for details.
 #
 #   Example:
-#     if mac::files::user::chown $dirPath; then
+#     if user::files::chown $dirPath; then
 #       <code for positive result>
 #     else
 #       <code for negative result>
@@ -83,7 +83,7 @@ _owner() {
 #
 #   $1 The path to change the ownership of.
 # */
-function mac::files::user::chown() {
+function user::files::chown() {
   local OWNER
   local GROUP
   local TFILE
@@ -110,7 +110,7 @@ function mac::files::user::chown() {
 #   is defined in _core.sh or _root.sh.  Please see these scripts for details.
 #
 #   Example:
-#     if mac::files::user::chown $dirPath; then
+#     if user::files::chown $dirPath; then
 #       <code for positive result>
 #     else
 #       <code for negative result>
@@ -118,7 +118,7 @@ function mac::files::user::chown() {
 #
 #   $1 The directory path to create
 # */
-function mac::files::user::mkdir() {
+function user::files::mkdir() {
   local DIR
   DIR="$1"
 
@@ -134,7 +134,7 @@ function mac::files::user::mkdir() {
     fi
   fi
 
-  if ! mac::files::user::chown "$DIR"; then
+  if ! user::files::chown "$DIR"; then
     return 1
   fi
 
@@ -146,7 +146,7 @@ function mac::files::user::mkdir() {
 #   ownership to the user referenced by $libsMacUser.
 #
 #   Example:
-#     if mac::files::user::touch $filePath; then
+#     if user::files::touch $filePath; then
 #       <code for positive result>
 #     else
 #       <code for negative result>
@@ -154,7 +154,7 @@ function mac::files::user::mkdir() {
 #
 #   $1 The file path to create
 # */
-function mac::files::user::touch() {
+function user::files::touch() {
   local parentDirectory
   local theFile
   theFile="$1"
@@ -173,7 +173,7 @@ function mac::files::user::touch() {
       return 1
     fi
 
-    if ! mac::files::user::chown "$theFile"; then
+    if ! user::files::chown "$theFile"; then
       return 1
     fi
   fi

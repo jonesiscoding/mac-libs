@@ -3,8 +3,8 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_defaults" ] && return 0
 
-# shellcheck source=./_files.sh
-source "$libSourcePath/mac/_files.sh"
+# shellcheck source=./files.sh
+source "$libsMacSourcePath/user/files.sh"
 
 function defaults::toBoolean() {
   local inValue trueValue
@@ -19,7 +19,7 @@ function defaults::toBoolean() {
   echo "0" && return 0
 }
 
-function defaults::user::has() {
+function user::defaults::has() {
   local KEY
   local PLIST
 
@@ -36,7 +36,7 @@ function defaults::user::has() {
   fi
 }
 
-function defaults::user::read() {
+function user::defaults::read() {
   local KEY
   local VALUE
   local PLIST
@@ -58,11 +58,11 @@ function defaults::user::read() {
   fi
 }
 
-function defaults::user::readArray() {
-  defaults::user::read "$1" "$2" 2> /dev/null | /usr/bin/grep -wv -e '(' -e ')' | /usr/bin/rev | /usr/bin/cut -d',' -f2 | /usr/bin/cut -d' ' -f1 | /usr/bin/rev
+function user::defaults::readArray() {
+  user::defaults::read "$1" "$2" 2> /dev/null | /usr/bin/grep -wv -e '(' -e ')' | /usr/bin/rev | /usr/bin/cut -d',' -f2 | /usr/bin/cut -d' ' -f1 | /usr/bin/rev
 }
 
-function defaults::user::write() {
+function user::defaults::write() {
   local DOMAIN
   local KEY
   local VALUE

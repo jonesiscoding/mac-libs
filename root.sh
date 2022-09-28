@@ -61,6 +61,6 @@ if [ -z "$sourced_lib_root" ]; then
   # Internal Function Dependencies
   #
 
-  # shellcheck source=./apps/_dependencies.sh
-  source "$libsMacSourcePath/apps/_dependencies.sh"
+  # shellcheck source=./_dependencies.sh
+  source "$libsMacSourcePath/_dependencies.sh"
 fi

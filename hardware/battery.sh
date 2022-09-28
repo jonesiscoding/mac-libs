@@ -5,7 +5,7 @@
 #     Contains functions to allow easy retrieval of battery information
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_battery.sh"
+#     source "<path-to-os-libs>/os/battery.sh"
 #
 #     See functions for additional examples
 #
@@ -24,12 +24,12 @@
 #   Public: Gets the current battery charge as a percentage.
 #
 #   Example:
-#     percentage=$(mac::battery::percentage)
+#     percentage=$(hardware::battery::percentage)
 #
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 # */
-function mac::battery::percentage() {
+function hardware::battery::percentage() {
   /usr/sbin/system_profiler SPPowerDataType battery -json | "$_libsMacBattery_JQ" '.SPPowerDataType[0].sppower_battery_charge_info.sppower_battery_state_of_charge'
 }
 
@@ -37,7 +37,7 @@ function mac::battery::percentage() {
 #   Public: Evaluates whether the battery is fully charged
 #
 #   Example:
-#     if mac::battery::isFullyCharged; then
+#     if hardware::battery::isFullyCharged; then
 #       <positive code here>
 #     else
 #       <negative code here>
@@ -46,7 +46,7 @@ function mac::battery::percentage() {
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 # */
-function mac::battery::isFullyCharged() {
+function hardware::battery::isFullyCharged() {
   /usr/sbin/system_profiler SPPowerDataType battery -json | "$_libsMacBattery_JQ" '.SPPowerDataType[0].sppower_battery_charge_info.sppower_battery_fully_charged'
 }
 
@@ -54,7 +54,7 @@ function mac::battery::isFullyCharged() {
 #   Public: Evaluates whether the battery is charging
 #
 #   Example:
-#     if mac::battery::isCharging; then
+#     if hardware::battery::isCharging; then
 #       <positive code here>
 #     else
 #       <negative code here>
@@ -63,7 +63,7 @@ function mac::battery::isFullyCharged() {
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 # */
-function mac::battery::isCharging() {
+function hardware::battery::isCharging() {
   /usr/sbin/system_profiler SPPowerDataType battery -json | "$_libsMacBattery_JQ" '.SPPowerDataType[0].sppower_battery_charge_info.sppower_battery_is_charging'
 }
 
@@ -71,12 +71,12 @@ function mac::battery::isCharging() {
 #   Public: Displays the number of battery cycles
 #
 #   Example:
-#     cycles=$(mac::battery::cycles)
+#     cycles=$(hardware::battery::cycles)
 #
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 # */
-function mac::battery::cycles() {
+function hardware::battery::cycles() {
   /usr/sbin/system_profiler SPPowerDataType battery -json | "$_libsMacBattery_JQ" '.SPPowerDataType[0].sppower_battery_health_info.sppower_battery_cycle_count'
 }
 
@@ -84,12 +84,12 @@ function mac::battery::cycles() {
 #   Public: Displays the battery serial number
 #
 #   Example:
-#     serial=$(mac::battery::getSerialNumber)
+#     serial=$(hardware::battery::getSerialNumber)
 #
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 # */
-function mac::battery::getSerialNumber() {
+function hardware::battery::getSerialNumber() {
   /usr/sbin/system_profiler SPPowerDataType battery -json | "$_libsMacBattery_JQ" '.SPPowerDataType[0].sppower_battery_model_info.sppower_battery_serial_number'
 }
 

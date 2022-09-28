@@ -5,7 +5,7 @@
 #     Contains functions to ease the retrieval of information about the content cache serving this Mac.
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_cache.sh"
+#     source "<path-to-os-libs>/os/cache.sh"
 #
 #     See functions for additional examples
 #
@@ -37,9 +37,9 @@ function _getAssetCacheLocators() {
 #   prevent additional overhead when using the function repeatedly.
 #
 #   Example:
-#     cacheIPs=$(mac::cache::personal)
+#     cacheIPs=$(os::os::cache::personal)
 # */
-function mac::cache::personal() {
+function os::cache::personal() {
   [ -z "$_libsMacCache_Personal" ] && _libsMacCache_Personal=$(_getAssetCacheLocators "personal")
   echo "$_libsMacCache_Personal"
 }
@@ -49,9 +49,9 @@ function mac::cache::personal() {
 #   additional overhead when using the function repeatedly.
 #
 #   Example:
-#     cacheIPs=$(mac::cache::shared)
+#     cacheIPs=$(os::os::cache::shared)
 # */
-function mac::cache::shared() {
+function os::cache::shared() {
   [ -z "$_libsMacCache_Shared" ] && _libsMacCache_Shared=$(_getAssetCacheLocators "shared")
   echo "$_libsMacCache_Shared"
 }

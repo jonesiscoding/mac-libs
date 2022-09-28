@@ -5,7 +5,7 @@
 #     Contains functions that work with Adobe Acrobat DC, Reader, and XI
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_acrobat.sh"
+#     source "<path-to-os-libs>/os/acrobat.sh"
 #     <various code>
 #     <see function examples>
 #
@@ -23,11 +23,11 @@
 #   Public: Displays the path to the given edition of Adobe Acrobat, if installed.
 #
 #   Example:
-#     acrobatPath=$(acrobat::path DC)
+#     acrobatPath=$(apps::acrobat::path DC)
 #
 #   $1  The edition of Adobe Acrobat to retrieve the path for: DC, XI, or Reader.
 # */
-function acrobat::path() {
+function apps::acrobat::path() {
   local edition aDir
 
   edition="$1"
@@ -54,12 +54,12 @@ function acrobat::path() {
 #   Public: Displays the path to the current handler of PDF files for the OS.
 #
 #   Example:
-#     pdfHandler=$(acrobat::getPdfHandler)
+#     pdfHandler=$(apps::acrobat::getPdfHandler)
 #
 #   Dependency:
 #     duti (https://github.com/moretension/duti)
 # */
-function acrobat::getPdfHandler() {
+function apps::acrobat::getPdfHandler() {
   local pathDuti
 
   dependency::assert "duti"
@@ -73,21 +73,21 @@ function acrobat::getPdfHandler() {
 #   Acrobat, if installed.
 #
 #   Example:
-#     acrobat::setPdfHandler DC
+#     apps::acrobat::setPdfHandler DC
 #
 #   Dependency:
 #     duti (https://github.com/moretension/duti)
 #
 #   $1    The edition of Adobe Acrobat to use for PDF files, if installed.
 # */
-function acrobat::setPdfHandler() {
+function apps::acrobat::setPdfHandler() {
   local pathDuti edition aPath bundleId
 
   dependency::assert "duti"
   pathDuti=$(dependency::path duti)
 
   edition="$1"
-  aPath=$(acrobat::path "$edition")
+  aPath=$(apps::acrobat::path "$edition")
   bundleId=$(/usr/bin/mdls -n kMDItemCFBundleIdentifier -r "$aPath")
 
   if "$pathDuti" -s "$bundleId" "com.adobe.pdf" all > /dev/null 2>&1; then
@@ -101,15 +101,15 @@ function acrobat::setPdfHandler() {
 #   Public: Displays the installed version of the given edition of Adobe Acrobat.
 #
 #   Example:
-#     acrobatVersion=$(acrobat::version DC)
+#     acrobatVersion=$(apps::acrobat::version DC)
 #
 #   $1  The edition of Adobe Acrobat to retrieve the version for: DC, XI, or Reader.
 # */
-function acrobat::version() {
+function apps::acrobat::version() {
   local edition aPath
 
   edition="$1"
-  aPath=$(acrobat::path "$edition")
+  aPath=$(apps::acrobat::path "$edition")
 
   if [ -n "$aPath" ]; then
     _getAdobePlistValue "$aPath" CFBundleShortVersionString
@@ -123,7 +123,7 @@ function acrobat::version() {
 #   Public: Runs the uninstaller for the given edition of Adobe Acrobat, if installed.
 #
 #   Example:
-#     if acrobat::uninstall XI; then
+#     if apps::acrobat::uninstall XI; then
 #       <success code here>
 #     else
 #       <failure code here>
@@ -131,7 +131,7 @@ function acrobat::version() {
 #
 #   $1  The edition of Adobe Acrobat to uninstall: DC, XI, or Reader.
 # */
-function acrobat::uninstall() {
+function apps::acrobat::uninstall() {
   local edition
 
   edition="$1"

@@ -3,31 +3,31 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_version" ] && return 0
 
-function mac::version::build() {
+function os::version::build() {
   [ -z "$_libsMacVersion_Build" ] && _libsMacVersion_Build=$(/usr/bin/sw_vers -BuildVersion)
   echo "$_libsMacVersion_Build"
 }
 
-function mac::version::full() {
+function os::version::full() {
   [ -z "$_libsMacVersion_Version" ] && _libsMacVersion_Version=$(/usr/bin/sw_vers -productVersion)
   echo "$_libsMacVersion_Version"
 }
 
-function mac::version::major() {
-  mac::version::full | /usr/bin/cut -d "." -f1
+function os::version::major() {
+  os::version::full | /usr/bin/cut -d "." -f1
 }
 
-function mac::version::minor() {
-  mac::version::full | /usr/bin/cut -d "." -f2
+function os::version::minor() {
+  os::version::full | /usr/bin/cut -d "." -f2
 }
 
-function mac::version::name() {
+function os::version::name() {
   local MAJOR
   local MINOR
 
-  MAJOR=$(mac::version::major)
+  MAJOR=$(os::version::major)
   if [ "$MAJOR" -eq "10" ]; then
-    MINOR=$(mac::version::minor)
+    MINOR=$(os::version::minor)
     [ "${MINOR:-0}" -eq "5" ] && echo "Leopard" && return 0
     [ "${MINOR:-0}" -eq "6" ] && echo "Snow Leopard" && return 0
     [ "${MINOR:-0}" -eq "7" ] && echo "Lion" && return 0
@@ -48,8 +48,8 @@ function mac::version::name() {
   echo "Unknown" && return 0
 }
 
-function mac::version::patch() {
-  mac::version::full | /usr/bin/cut -d "." -f2
+function os::version::patch() {
+  os::version::full | /usr/bin/cut -d "." -f2
 }
 
 if [ -z "$sourced_lib_mac_version" ]; then

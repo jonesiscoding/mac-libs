@@ -5,7 +5,7 @@
 #     Contains functions to allow for easy colored output in any bash script.
 #
 #   Example:
-#     source "<path-to-mac-libs>/io/_output.sh"
+#     source "<path-to-os-libs>/output/output.sh"
 #     <various code>
 #     output::notify "Summoning the Rabbit"
 #     if ! <rabbit summoning code>; then

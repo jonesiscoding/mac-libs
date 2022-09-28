@@ -5,7 +5,7 @@
 #     Contains functions to allow for retrieval of information about installed app bundles.
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_app.sh"
+#     source "<path-to-os-libs>/os/apps.sh"
 #
 #     See functions for additional examples
 #
@@ -23,11 +23,11 @@
 #   Public: Retrieves the name from the given app bundle
 #
 #   Example:
-#     name=$(mac::app::getName /Applications/iTerm.app)
+#     name=$(apps::getName /Applications/iTerm.app)
 #
 #   $1 The absolute path to the application bundle.
 # */
-function mac::app::getName() {
+function apps::getName() {
   _getPlistValue "$1" CFBundleName
 }
 
@@ -35,11 +35,11 @@ function mac::app::getName() {
 #   Public: Retrieves the bundle ID from the given app bundle
 #
 #   Example:
-#     bundleId=$(mac::app::getBundleId /Applications/iTerm.app)
+#     bundleId=$(apps::getBundleId /Applications/iTerm.app)
 #
 #   $1 The absolute path to the application bundle.
 # */
-function mac::app::getBundleId() {
+function apps::getBundleId() {
   /usr/bin/mdls -n kMDItemCFBundleIdentifier -r "$1"
 }
 
@@ -47,11 +47,11 @@ function mac::app::getBundleId() {
 #   Public: Retrieves the (short) version from the given app bundle
 #
 #   Example:
-#     version=$(mac::app::getVersion /Applications/iTerm.app)
+#     version=$(apps::getVersion /Applications/iTerm.app)
 #
 #   $1 The absolute path to the application bundle.
 # */
-function mac::app::getVersion() {
+function apps::getVersion() {
   _getPlistValue "$1" CFBundleShortVersionString
 }
 
@@ -59,8 +59,8 @@ function mac::app::getVersion() {
 #   Public: Sets the given app as the default app for the given extension
 #
 #   Example:
-#     mac::app::setDefaultForExtension "/Applications/Visual Studio Code.app" "js"
-#     name=$(mac::app::getName /Applications/iTerm.app)
+#     apps::setDefaultForExtension "/Applications/Visual Studio Code.app" "js"
+#     name=$(apps::getName /Applications/iTerm.app)
 #
 #   Dependency:
 #     duti (https://github.com/moretension/duti)
@@ -68,13 +68,13 @@ function mac::app::getVersion() {
 #   $1 The Extension
 #   $2 The absolute path to the application bundle.
 # */
-function mac::app::setDefaultForExtension() {
+function apps::setDefaultForExtension() {
   local app ext uti bundle duti
 
   ext="$1"
   app="$2"
-  uti=$(mac::app::getUti "$ext")
-  bundle=$(mac::app::getBundleId "$app")
+  uti=$(apps::getUti "$ext")
+  bundle=$(apps::getBundleId "$app")
   duti=$(dependency::path duti)
 
   if [ -n "$duti" ]; then
@@ -92,14 +92,14 @@ function mac::app::setDefaultForExtension() {
 #   Public: Gets the UTI for the given extension, from a limited number of known UTIs.
 #
 #   Example:
-#     jsUti=$(mac::app::getUti js)
+#     jsUti=$(apps::getUti js)
 #
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 #
 #   $1 The Extension
 # */
-function mac::app::getUti() {
+function apps::getUti() {
   local ext uti pathJQ
 
   ext="$1"

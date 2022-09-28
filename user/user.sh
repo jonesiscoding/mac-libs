@@ -3,7 +3,7 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_user" ] && return 0
 
-function mac::user::appleid() {
+function user::appleid() {
   local plist
 
   plist="/Users/$libsMacUser/Library/Preferences/MobileMeAccounts.plist"
@@ -15,15 +15,15 @@ function mac::user::appleid() {
   fi
 }
 
-function mac::user::console() {
+function user::console() {
   echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }'
 }
 
-function mac::user::dir() {
+function user::dir() {
   echo "/Users/${libsMacUser}"
 }
 
-function mac::user::focus() {
+function user::focus() {
   local major
   local focus
 
@@ -42,10 +42,10 @@ function mac::user::focus() {
   fi
 }
 
-function mac::user::logout::forced() {
+function user::logout::forced() {
   local consoleUserId consoleUserName
 
-  consoleUserName=$(mac::user::console)
+  consoleUserName=$(user::console)
   consoleUserId=$(/usr/bin/id -u "$consoleUserName")
 
   if /bin/launchctl asuser "$consoleUserId" sudo -iu "$consoleUserName" /usr/bin/osascript -e "tell application \"loginwindow\" to «event aevtrlgo»"; then
@@ -56,10 +56,10 @@ function mac::user::logout::forced() {
   fi
 }
 
-function mac::user::logout() {
+function user::logout() {
   local consoleUserId consoleUserName
 
-  consoleUserName=$(mac::user::console)
+  consoleUserName=$(user::console)
   consoleUserId=$(/usr/bin/id -u "$consoleUserName")
 
   if /bin/launchctl asuser "$consoleUserId" sudo -iu "$consoleUserName" /usr/bin/osascript -e "tell app \"System Events\" to log out"; then
@@ -70,15 +70,15 @@ function mac::user::logout() {
   fi
 }
 
-function mac::user::fullname() {
+function user::fullname() {
   /usr/bin/id -F "$libsMacUser"
 }
 
-function mac::user::id() {
+function user::id() {
   /usr/bin/id -u "$libsMacUser"
 }
 
-function mac::user::idle() {
+function user::idle() {
   local S MM M H IDLE
   if user::isConsole; then
     # Get MacOSX idletime. Shamelessly stolen from http://bit.ly/yVhc5H
@@ -103,9 +103,9 @@ function mac::user::idle() {
   return 1
 }
 
-function mac::user::isActive() {
+function user::isActive() {
   local IDLE
-  if mac::user::isConsole; then
+  if user::isConsole; then
     # Get MacOSX idletime. Shamelessly stolen from http://bit.ly/yVhc5H
     IDLE=$(/usr/sbin/ioreg -c IOHIDSystem | /usr/bin/awk '/HIDIdleTime/ {print int($NF/1000000000); exit}' | /usr/bin/xargs)
     if [ "${IDLE}" -gt 0 ]; then
@@ -120,19 +120,19 @@ function mac::user::isActive() {
   return 1
 }
 
-function mac::user::isConsole() {
-  if [ "$libsMacUser" == "$(mac::user::console)" ]; then
+function user::isConsole() {
+  if [ "$libsMacUser" == "$(user::console)" ]; then
     return 0
   else
     return 1
   fi
 }
 
-function mac::user::name() {
-  /usr/bin/dscl . -read "$(mac::user::dir)" RealName | /usr/bin/sed -n 's/^ //g;2p'
+function user::name() {
+  /usr/bin/dscl . -read "$(user::dir)" RealName | /usr/bin/sed -n 's/^ //g;2p'
 }
 
-function mac::user::open() {
+function user::open() {
   local TUID
   local TOPEN
 
@@ -143,7 +143,7 @@ function mac::user::open() {
   /bin/launchctl asuser $TUID /usr/bin/open "${TOPEN}" >/dev/null 2>&1 &
 }
 
-function mac::user::run() {
+function user::run() {
   /usr/bin/su - "$libsMacUser" -c "$1"
 }
 
@@ -151,11 +151,11 @@ function user::shell() {
   /usr/bin/finger "$libsMacUser" | /usr/bin/grep 'Shell: ' | /usr/bin/cut -d ':' -f3
 }
 
-function mac::user::username() {
+function user::username() {
   echo "$libsMacUser"
 }
 
-function mac::user::waitLogout() {
+function user::waitLogout() {
   local delay
   local force
   local reps
@@ -164,7 +164,7 @@ function mac::user::waitLogout() {
 
   delay=${1:-30}
   force=${2}
-  tUser=$(mac::user::console)
+  tUser=$(user::console)
 
   # Force the Delay to be Divisible by 5, unless it is 0
   [ "$delay" -lt "5" ] && [ "$delay" -ne "0" ] && delay=5
@@ -177,17 +177,17 @@ function mac::user::waitLogout() {
     do
         sleep 5
         inc=$((inc+1))
-        tUser=$(mac::user::console)
+        tUser=$(user::console)
     done
   fi
 
   # Force User Logout if there IS a user
   if [ -n "$tUser" ] && [ -n "$force" ]; then
-    mac::user::logout::forced
+    user::logout::forced
   fi
 
   # Check one last time and give appropriate return code
-  if [ -z "$(mac::user::console)" ]; then
+  if [ -z "$(user::console)" ]; then
     return 0
   else
     return 1

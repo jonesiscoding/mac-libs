@@ -5,7 +5,7 @@
 #     Contains functions to ease the retrieval of power information on this Mac.
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_power.sh"
+#     source "<path-to-os-libs>/os/power.sh"
 #
 #     See functions for additional examples
 #
@@ -26,8 +26,8 @@
 #   a MacBook with a power adapter; Mac Desktops will also return a positive result.
 #
 #   Example:
-#     if mac::power::isPlugged in; then
-#       <code to run if the mac is on AC power>
+#     if hardware::power::isPlugged in; then
+#       <code to run if the os is on AC power>
 #     else
 #       <code to run if not plugged in>
 #     fi
@@ -35,12 +35,13 @@
 #   Dependency:
 #     jq (https://stedolan.github.io/jq/)
 # */
-function mac::power::isPluggedIn() {
+function hardware::power::isPluggedIn() {
   local jqPath
 
   # Ensure JQ dependency
   dependency::assert "jq"
   jqPath=$(dependency::path jq)
+  # bashsupport disable=GrazieInspection
   if /usr/sbin/system_profiler SPPowerDataType battery -json | "$jqPath" -r '.SPPowerDataType[]."AC Power"."Current Power Source"' | grep -q "TRUE"; then
     return 0
   else
@@ -52,13 +53,13 @@ function mac::power::isPluggedIn() {
 #   Public: Evaluates whether the display has a NoDisplaySleep or PreventUserIdleDisplaySleep assertion.
 #
 #   Example:
-#     if mac::power::isDisplayNoSleep; then
+#     if hardware::power::isDisplayNoSleep; then
 #       <code to run if display sleep is prevented>
 #     else
 #       <code to run if not>
 #     fi
 # */
-function mac::power::isDisplayNoSleep() {
+function hardware::power::isDisplayNoSleep() {
   local asserts
   asserts=$(/usr/bin/pmset -g assertions | /usr/bin/awk '/NoDisplaySleepAssertion | PreventUserIdleDisplaySleep/ && match($0,/\(.+\)/) && ! /coreaudiod/ {gsub(/^\ +/,"",$0); print};')
 

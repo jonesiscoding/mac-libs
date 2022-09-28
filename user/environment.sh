@@ -3,7 +3,7 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_environment" ] && return 0
 
-function mac::environment::user::bash() {
+function user::environment::bash() {
   local key
   local value
   local bashrc
@@ -28,11 +28,11 @@ function mac::environment::user::bash() {
   return 0
 }
 
-function mac::environment::user::isUpdated() {
+function user::environment::isUpdated() {
   return $_libsMacEnvironment_UserUpdated
 }
 
-function mac::environment::user::zsh() {
+function user::environment::zsh() {
   local key
   local value
   local zshrc
@@ -57,7 +57,7 @@ function mac::environment::user::zsh() {
   return 0
 }
 
-function mac::environment::user::gui() {
+function user::environment::gui() {
   local key value launchagent
 
   key="${1}"

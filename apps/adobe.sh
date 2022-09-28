@@ -6,7 +6,7 @@
 #     the removal of Adobe products.
 #
 #   Example:
-#     source "<path-to-mac-libs>/mac/_adobe.sh"
+#     source "<path-to-os-libs>/os/adobe.sh"
 #
 #     See functions for additional examples
 #
@@ -95,13 +95,13 @@ function _getAdobePlistValue() {
 #   Public: Retrieves the path to the given Adobe product name and year.
 #
 #   Example:
-#     psPath=$(adobe::path Photoshop 2022)
-#     dimPath=$(adobe::path Dimension)
+#     psPath=$(apps::adobe::path Photoshop 2022)
+#     dimPath=$(apps::adobe::path Dimension)
 #
 #   $1 The name of the Adobe app to find.
 #   $2 The optional year of the adobe app.  Some apps don't use years.
 # */
-function adobe::path() {
+function apps::adobe::path() {
   local name year aDir
 
   name="$1"
@@ -134,19 +134,19 @@ function adobe::path() {
 #   Public: Retrieves the platform for the given adobe app name and year.
 #
 #   Example:
-#     platform=$(adobe::platform Photoshop 2022)
-#     platform=$(adobe::platform Dimension)
+#     platform=$(apps::adobe::platform Photoshop 2022)
+#     platform=$(apps::adobe::platform Dimension)
 #
 #   $1 The name of the Adobe app
 #   $2 The optional year of the adobe app.  Some apps don't use years.
 # */
-function adobe::platform() {
+function apps::adobe::platform() {
   local name year version adbarg platform
 
   name="$1"
   year="$2"
 
-  version=$(adobe::path "$name" "$year")
+  version=$(apps::adobe::path "$name" "$year")
   [ -z "$version" ] && return 1
 
   adbarg=$(_getAdbArgFile "$name" "$version")
@@ -162,19 +162,19 @@ function adobe::platform() {
 #   Public: Retrieves the SAP code for the given adobe app name and year.
 #
 #   Example:
-#     sap=$(adobe::sap Photoshop 2022)
-#     sap=$(adobe::sap Dimension)
+#     sap=$(apps::adobe::sap Photoshop 2022)
+#     sap=$(apps::adobe::sap Dimension)
 #
 #   $1 The name of the Adobe app
 #   $2 The optional year of the adobe app.  Some apps don't use years.
 # */
-function adobe::sap() {
+function apps::adobe::sap() {
   local name year version adbarg sap
 
   name="$1"
   year="$2"
 
-  version=$(adobe::path "$name" "$year")
+  version=$(apps::adobe::path "$name" "$year")
   [ -z "$version" ] && return 1
 
   adbarg=$(_getAdbArgFile "$name" "$version")
@@ -190,7 +190,7 @@ function adobe::sap() {
 #   Public: Uninstalls the Adobe app for the given name and year, optionally removing user preferences.
 #
 #   Example:
-#     if adobe::uninstall Photoshop 2022 "true"; then
+#     if apps::adobe::uninstall Photoshop 2022 "true"; then
 #       <success code here>
 #     else
 #       <failure code here>
@@ -200,7 +200,7 @@ function adobe::sap() {
 #   $2 The optional year of the adobe app to uninstall.  Some apps don't use years.
 #   $3 To remove user preferences, set this to "true"
 # */
-function adobe::uninstall() {
+function apps::adobe::uninstall() {
   local name year version adbarg sap platform prefs baseVersion
 
   name="$1"
@@ -212,7 +212,7 @@ function adobe::uninstall() {
   [ "$prefs" == "FALSE" ] && prefs="false"
 
   # Get Version from App
-  version=$(adobe::version "$name" "$year")
+  version=$(apps::adobe::version "$name" "$year")
   [ -z "$version" ] && return 1
 
   # Get Adbarg File
@@ -243,19 +243,19 @@ function adobe::uninstall() {
 #   Public: Retrieves the version for the given adobe app name and year.
 #
 #   Example:
-#     version=$(adobe::version Photoshop 2022)
-#     version=$(adobe::version Dimension)
+#     version=$(apps::adobe::version Photoshop 2022)
+#     version=$(apps::adobe::version Dimension)
 #
 #   $1 The name of the Adobe app.
 #   $2 The optional year of the adobe app. Some apps don't use years.
 # */
-function adobe::version() {
+function apps::adobe::version() {
   local name year aPath
 
   name="$1"
   year="$2"
 
-  aPath=$(adobe::path "$name" "$year")
+  aPath=$(apps::adobe::path "$name" "$year")
   if [ -n "$aPath" ]; then
     _getAdobePlistValue "$aPath" CFBundleShortVersionString
   fi
@@ -265,19 +265,19 @@ function adobe::version() {
 #   Public: Retrieves the base version for the given adobe app name and year.
 #
 #   Example:
-#     baseVersion=$(adobe::versionBase Photoshop 2022)
-#     baseVersion=$(adobe::versionBase Dimension)
+#     baseVersion=$(apps::adobe::versionBase Photoshop 2022)
+#     baseVersion=$(apps::adobe::versionBase Dimension)
 #
 #   $1 The name of the Adobe app.
 #   $2 The optional year of the adobe app.  Some apps don't use years.
 # */
-function adobe::versionBase() {
+function apps::adobe::versionBase() {
   local name year version adbarg baseVersion
 
   name="$1"
   year="$2"
 
-  version=$(adobe::version "$name" "$year")
+  version=$(apps::adobe::version "$name" "$year")
   [ -z "$version" ] && return 1
 
   adbarg=$(_getAdbArgFile "$name" "$version")
@@ -293,19 +293,19 @@ function adobe::versionBase() {
 #   Public: Retrieves the major version for the given adobe app name and year.
 #
 #   Example:
-#     major=$(adobe::versionMajor Photoshop 2022)
-#     major=$(adobe::versionMajor Dimension)
+#     major=$(apps::adobe::versionMajor Photoshop 2022)
+#     major=$(apps::adobe::versionMajor Dimension)
 #
 #   $1 The name of the Adobe app.
 #   $2 The optional year of the adobe app. Some apps don't use years.
 # */
-function adobe::versionMajor() {
+function apps::adobe::versionMajor() {
   local name year version
 
   name="$1"
   year="$2"
 
-  version=$(adobe::version "$name" "$year")
+  version=$(apps::adobe::version "$name" "$year")
   [ -z "$version" ] && return 1
 
   echo "$version" | /usr/bin/cut -d'.' -f1
@@ -315,19 +315,19 @@ function adobe::versionMajor() {
 #   Public: Retrieves the minor version for the given adobe app name and year.
 #
 #   Example:
-#     minor=$(adobe::versionMinor Photoshop 2022)
-#     minor=$(adobe::versionMinor Dimension)
+#     minor=$(apps::adobe::versionMinor Photoshop 2022)
+#     minor=$(apps::adobe::versionMinor Dimension)
 #
 #   $1 The name of the Adobe app.
 #   $2 The optional year of the adobe app. Some apps don't use years.
 # */
-function adobe::versionMinor() {
+function apps::adobe::versionMinor() {
   local name year version
 
   name="$1"
   year="$2"
 
-  version=$(adobe::version "$name" "$year")
+  version=$(apps::adobe::version "$name" "$year")
   [ -z "$version" ] && return 1
 
   echo "$version" | /usr/bin/cut -d'.' -f2

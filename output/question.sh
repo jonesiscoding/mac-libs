@@ -4,7 +4,7 @@
 #     Contains functions to allow for easy questions/answers in any bash script.
 #
 #   Example:
-#     source "<path-to-mac-libs>/io/_question.sh"
+#     source "<path-to-os-libs>/output/question.sh"
 #     <various code>
 #     <see function examples>
 #
@@ -19,8 +19,8 @@
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_question" ] && return 0
 
 if [ -z "$sourced_lib_output" ]; then
-  # shellcheck source=./_output.sh
-  source "$libSourcePath/io/_output.sh"
+  # shellcheck source=./output.sh
+  source "$libsMacSourcePath/io/output.sh"
 fi
 
 # /*!
@@ -28,7 +28,7 @@ fi
 #   based on the user's answer.
 #
 #   Example:
-#     if question::ask "Is your favorite color yellow?"; then
+#     if output::question::ask "Is your favorite color yellow?"; then
 #        <code for yellow>
 #     else
 #        <code for other colors>
@@ -36,7 +36,7 @@ fi
 #
 #   $1  The question
 # */
-function question::ask() {
+function output::question::ask() {
   local reply
 
   echo -e -n "${_libsMacOutput_Yellow}$1${_libsMacOutput_EndColor} [y/n] "
@@ -52,11 +52,11 @@ function question::ask() {
 #   followed by the enter key.
 #
 #   Example:
-#     response=$(question::text "What is your quest?")
+#     response=$(output::question::text "What is your quest?")
 #
 #   $1  The question
 # */
-function question::text() {
+function output::question::text() {
   local ANSWER
   local QUESTION
   local DEFAULT
@@ -75,12 +75,12 @@ function question::text() {
 #
 #   Example:
 #     choices=("African" "European")
-#     answer=$(question::choice "Which kind of swallow is it?" "African European"; then
+#     answer=$(output::question::choice "Which kind of swallow is it?" "African European"; then
 #
 #   $1  The question string
 #   $2  The selections, enclosed in quotes, space delimited
 # */
-function question::choice() {
+function output::question::choice() {
   local choice
   local choices
 

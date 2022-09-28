@@ -3,7 +3,7 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_network" ] && return 0
 
-function mac::network::getBluetoothInterfaces() {
+function os::network::getBluetoothInterfaces() {
   if [ ${#_libsMacNetwork_Bluetooth[@]} -eq 0 ]; then
     _libsMacNetwork_Bluetooth=$(/usr/sbin/networksetup -listallhardwareports | grep -A2 'Bluetooth' | grep -o en.)
   fi
@@ -13,7 +13,7 @@ function mac::network::getBluetoothInterfaces() {
   return 0
 }
 
-function mac::network::getVpnInterfaces() {
+function os::network::getVpnInterfaces() {
   if [ ${#_libsMacNetwork_Vpn[@]} -eq 0 ]; then
     _libsMacNetwork_Vpn=$(/sbin/ifconfig -u | /usr/bin/grep 'POINTOPOINT' | cut -d: -f1)
   fi
@@ -23,7 +23,7 @@ function mac::network::getVpnInterfaces() {
   return 0
 }
 
-function mac::network::getWiFiInterfaces() {
+function os::network::getWiFiInterfaces() {
   if [ ${#_libsMacNetwork_Wifi[@]} -eq 0 ]; then
     _libsMacNetwork_Wifi=$(/usr/sbin/networksetup -listallhardwareports | grep -A2 'Wi-Fi\|Airport' | grep -o en.)
   fi
@@ -33,11 +33,11 @@ function mac::network::getWiFiInterfaces() {
   return 0
 }
 
-function mac::network::getWiFiSSID() {
+function os::network::getWiFiSSID() {
   /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -I  | /usr/bin/awk -F' SSID: '  '/ SSID: / {print $2}'
 }
 
-function mac::network::getWiredInterfaces() {
+function os::network::getWiredInterfaces() {
   local interfaces
 
   if [ ${#_libsMacNetwork_Wifi[@]} -eq 0 ]; then
@@ -57,20 +57,20 @@ function mac::network::getWiredInterfaces() {
   return 0
 }
 
-function mac::network::getIpv4() {
+function os::network::getIpv4() {
   /sbin/ifconfig "${1}" | grep "inet " | cut -d ' ' -f2 2>/dev/null
 }
 
-function mac::network::getVpnIp() {
+function os::network::getVpnIp() {
   local interfaces
   local interface
   local ip
 
-  interfaces=$(mac::network::getVpnInterfaces)
+  interfaces=$(os::network::getVpnInterfaces)
 
   while IFS= read -r interface
   do
-     ip=$(mac::network::getIpv4 "$interface")
+     ip=$(os::network::getIpv4 "$interface")
 
      if [ -n "$ip" ]; then
        echo "$ip" && return 0
@@ -80,16 +80,16 @@ function mac::network::getVpnIp() {
   return 1
 }
 
-function mac::network::getWiFiIp() {
+function os::network::getWiFiIp() {
   local interfaces
   local interface
   local ip
 
-  interfaces=$(mac::network::getWiFiInterfaces)
+  interfaces=$(os::network::getWiFiInterfaces)
 
   while IFS= read -r interface
   do
-     ip=$(mac::network::getIpv4 "$interface")
+     ip=$(os::network::getIpv4 "$interface")
 
      [ -n "$ip" ] && echo "$ip" && return 0
   done <<< "$interfaces"
@@ -97,17 +97,17 @@ function mac::network::getWiFiIp() {
   return 1
 }
 
-function mac::network::getWiredIp() {
+function os::network::getWiredIp() {
   local interfaces
   local interface
   local ip
 
-  interfaces=$(mac::network::getWiredInterfaces)
+  interfaces=$(os::network::getWiredInterfaces)
 
   while IFS= read -r interface
   do
     if [ -n "$interface" ]; then
-      ip=$(mac::network::getIpv4 "$interface")
+      ip=$(os::network::getIpv4 "$interface")
 
        [ -n "$ip" ] && echo "$ip" && return 0
     fi
@@ -116,26 +116,26 @@ function mac::network::getWiredIp() {
   return 1
 }
 
-function mac::network::isInterfaceActive() {
-  _isActiveIp "$(mac::network::getIpv4 "${1}")" || return 1
+function os::network::isInterfaceActive() {
+  _isActiveIp "$(os::network::getIpv4 "${1}")" || return 1
 
   return 0
 }
 
-function mac::network::isVpnActive() {
-  _isActiveIp "$(mac::network::getVpnIp)" || return 1
+function os::network::isVpnActive() {
+  _isActiveIp "$(os::network::getVpnIp)" || return 1
 
   return 0
 }
 
-function mac::network::isWiFiActive() {
-  _isActiveIp "$(mac::network::getWiFiIp)" || return 1
+function os::network::isWiFiActive() {
+  _isActiveIp "$(os::network::getWiFiIp)" || return 1
 
   return 0
 }
 
-function mac::network::isWiredActive() {
-  _isActiveIp "$(mac::network::getWiredIp)" || return 1
+function os::network::isWiredActive() {
+  _isActiveIp "$(os::network::getWiredIp)" || return 1
 
   return 0
 }
@@ -158,7 +158,7 @@ function _isBluetoothInterface() {
   local interfaces
 
   test="${1}"
-  interfaces=$(mac::network::getBluetoothInterfaces)
+  interfaces=$(os::network::getBluetoothInterfaces)
 
   while IFS= read -r interface
   do
@@ -173,7 +173,7 @@ function _isVpnInterface() {
   local interfaces
 
   test="${1}"
-  interfaces=$(mac::network::getVpnInterfaces)
+  interfaces=$(os::network::getVpnInterfaces)
 
   while IFS= read -r interface
   do
@@ -188,7 +188,7 @@ function _isWiFiInterface() {
   local interfaces
 
   test="${1}"
-  interfaces=$(mac::network::getWiFiInterfaces)
+  interfaces=$(os::network::getWiFiInterfaces)
 
   while IFS= read -r interface
   do
