@@ -22,7 +22,7 @@ if [ -z "$sourced_lib_core" ]; then
     libsMacBinPaths=("/usr/local/sbin" "/usr/local/bin" "/opt/homebrew/sbin" "/opt/homebrew/bin")
   fi
 
-  # The user referenced in all user functions (Note: This sets differently if sourcing "_root.sh")
+  # The user referenced in all user functions (Note: This sets differently if sourcing "root.sh")
   if [ -z "$libsMacUser" ]; then
     libsMacUser="${USER}"
   fi
