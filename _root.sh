@@ -19,21 +19,48 @@ function core::isJamf() {
   return $_libsMacCore_IsJamf
 }
 
+#
+# Library Initialization
+#
 if [ -z "$sourced_lib_root" ]; then
   # shellcheck disable=SC2034
   sourced_lib_root=0
 
+  #
+  # Global Variables
+  #
+
+  # Source Path for Mac-Libs Library
+  if [ -z "$libsMacSourcePath" ]; then
+    # shellcheck disable=SC2164,SC2034
+    libsMacSourcePath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )"
+  fi
+
+  # Paths to search for dependencies if the dependency isn't in the path
+  if [ ${#libsMacBinPaths[@]} -eq 0 ]; then
+    libsMacBinPaths=("/usr/local/sbin" "/usr/local/bin" "/opt/homebrew/sbin" "/opt/homebrew/bin")
+  fi
+
+  # The user referenced in all user functions
+  if [ -z "$libsMacUser" ] || [ "$libsMacUser" == "$USER" ]; then
+    # Set User Based on Jamf or Console User
+    if core::isJamf "$@"; then
+      libsMacUser="$3"
+    else
+      libsMacUser=$(echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }')
+    fi
+  fi
+
+  #
   # Internal Variables
+  #
+
   _libsMacCore_IsJamf=":::_:::"
 
-  # Global Variables
-  # shellcheck disable=SC2164,SC2034
-  libsMacSourcePath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )"
+  #
+  # Internal Function Dependencies
+  #
 
-  # Set User Based on
-  if core::isJamf "$@"; then
-    libsMacUser="$3"
-  else
-    libsMacUser=$(echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }')
-  fi
+  # shellcheck source=./apps/_dependencies.sh
+  source "$libsMacSourcePath/apps/_dependencies.sh"
 fi
