@@ -42,8 +42,27 @@ function mac::user::focus() {
   fi
 }
 
-function mac::user::forceLogout() {
-  if /bin/launchctl asuser "$(mac::user::id)" sudo -iu "$(mac::user::username)" /usr/bin/osascript -e \'tell app "System Events" to log out\'; then
+function mac::user::logout::forced() {
+  local consoleUserId consoleUserName
+
+  consoleUserName=$(mac::user::console)
+  consoleUserId=$(/usr/bin/id -u "$consoleUserName")
+
+  if /bin/launchctl asuser "$consoleUserId" sudo -iu "$consoleUserName" /usr/bin/osascript -e "tell application \"loginwindow\" to «event aevtrlgo»"; then
+    /bin/sleep 5
+    return 0
+  else
+    return 1
+  fi
+}
+
+function mac::user::logout() {
+  local consoleUserId consoleUserName
+
+  consoleUserName=$(mac::user::console)
+  consoleUserId=$(/usr/bin/id -u "$consoleUserName")
+
+  if /bin/launchctl asuser "$consoleUserId" sudo -iu "$consoleUserName" /usr/bin/osascript -e "tell app \"System Events\" to log out"; then
     /bin/sleep 5
     return 0
   else
@@ -164,7 +183,7 @@ function mac::user::waitLogout() {
 
   # Force User Logout if there IS a user
   if [ -n "$tUser" ] && [ -n "$force" ]; then
-    mac::user::forceLogout
+    mac::user::logout::forced
   fi
 
   # Check one last time and give appropriate return code
