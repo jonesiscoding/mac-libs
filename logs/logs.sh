@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# shellcheck disable=SC2164
-__libsMacSourceDir="$(cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")"; /bin/pwd -P)"
+[ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_logs" ] && return 0
+# shellcheck disable=SC2034
+sourced_lib_logs=0
 
 #
 # Sourced Functions

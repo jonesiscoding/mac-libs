@@ -8,7 +8,6 @@
 # shellcheck disable=SC2034
 sourced_lib_updates_metadata=0
 # shellcheck disable=SC2164
-__libsMacSourceDir="$(cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")"; /bin/pwd -P)"
 
 #
 # Sourced Functions
