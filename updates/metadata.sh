@@ -123,9 +123,11 @@ function updates::metadata::init() {
 
   # Init the installed.txt file
   _updatesMetadataInitFile "$(updates::metadata::file::installed)" || return 1
+  _updatesMetadataInitFile "$(updates::metadata::file::installedRaw)" || return 1
 
   # Init the downloaded.txt File
   _updatesMetadataInitFile "$(updates::metadata::file::downloaded)" || return 1
+  _updatesMetadataInitFile "$(updates::metadata::file::downloadedRaw)" || return 1
 
   # Init the deferred.count File
   _updatesMetadataInitFile "$(updates::metadata::file::deferrals)" || return 1
