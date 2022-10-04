@@ -131,6 +131,10 @@ function updates::metadata::init() {
 
   # Init the deferred.count File
   _updatesMetadataInitFile "$(updates::metadata::file::deferrals)" || return 1
+
+  # Import Raw Downloads & Installs
+  updates::metadata::import::installed
+  updates::metadata::import::downloaded
 }
 
 function updates::metadata::add::downloaded() {
