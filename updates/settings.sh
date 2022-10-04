@@ -59,7 +59,7 @@ function updates::settings::updateTime() {
 
 function updates::settings::workDir() {
   if [ -z "$_libsMacMdm_WorkDir" ]; then
-    _libsMacMdm_WorkDir=$(/usr/bin/defaults read "$(_getManagedPlistPath)" workPath 2>/dev/null || echo "/Library/Application\ Support/MDM")
+    _libsMacMdm_WorkDir=$(/usr/bin/defaults read "$(_getManagedPlistPath)" workPath 2>/dev/null || echo "/Library/Application Support/MDM")
 
     # Allow Override if Variable Set and Override is Allowed in Managed Settings
     [ -n "$libsMacMdmWorkDir" ] && updates::settings::override && _libsMacMdm_WorkDir="$libsMacMdmWorkDir"
