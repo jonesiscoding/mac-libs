@@ -34,6 +34,47 @@ function updates::open::preferencePane() {
 }
 
 # /*!
+#   Public: Opinionated check if system is ready to install updates, based on power and encryption job status.
+# */
+function updates::ready::system() {
+
+  if [ -f /usr/bin/fdesetup ] && /usr/bin/fdesetup status | /usr/bin/grep -q 'Encryption in progress'; then
+    errors::add "Encrypting File Vault"
+    return 1
+  fi
+
+  if ! hardware::power::isPluggedIn; then
+    errors::add "On Battery Power"
+    return 1
+  fi
+
+  return 0
+}
+
+# /*!
+#   Public: Opinionated check if user is ready for notifications or updates, base on display no sleep assertations and
+#   user focus mode selection.
+# */
+function updates::ready::user() {
+  local uFocus
+  if local::isUserPresent; then
+
+    if hardware::power::isDisplayNoSleep; then
+      errors::add "Display No Sleep"
+      return 1
+    fi
+
+    uFocus=$(user::focus)
+    if [ -n "$uFocus" ]; then
+      errors::add "User Focus $uFocus"
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
+# /*!
 #   Public: Removes any existing softwareupdate preferences, then kickstarts softwareupdated.
 # */
 function updates::restart::softwareupdated() {
