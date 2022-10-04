@@ -26,7 +26,7 @@ function updates::open::preferencePane() {
   consoleUser=$(_consoleUser)
   consoleUserId=$(/usr/bin/id -u "$consoleUser")
 
-  if [ -z "$currentId" ] || ! /bin/launchctl asuser "$currentId" /usr/bin/open /System/Library/PreferencePanes/SoftwareUpdate.prefPane; then
+  if [ -z "$consoleUserId" ] || ! /bin/launchctl asuser "$consoleUserId" /usr/bin/open /System/Library/PreferencePanes/SoftwareUpdate.prefPane; then
     return 0
   else
     return 1
