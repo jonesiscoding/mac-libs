@@ -1,7 +1,16 @@
 #!/bin/bash
 
-# Prevent being sourced more than once
+#
+# Module Initialization
+#
+
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_user" ] && return 0
+# shellcheck source=console.sh
+source "$(/usr/bin/dirname "${BASH_SOURCE[0]}")console.sh"
+
+#
+# Module Functions
+#
 
 function user::appleid() {
   local plist
@@ -13,10 +22,6 @@ function user::appleid() {
   else
     echo ""
   fi
-}
-
-function user::console() {
-  echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }'
 }
 
 function user::dir() {
