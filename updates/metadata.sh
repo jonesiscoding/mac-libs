@@ -74,14 +74,28 @@ function _parseUpdateLine() {
   echo "$out"
 }
 
+function _minutesSinceBoot() {
+  local secUp epochTime adjTime
+
+  secUp=$( sysctl kern.boottime | awk -F'[= |,]' '{print $6}' )
+  epochTime=$( date +%s )
+  adjTime=$( echo "$epochTime" - "$secUp" | bc )
+
+  echo "scale=0;$adjTime / 60" | bc
+}
+
 function _updatesMetadataInitFile() {
-  local fPath fDir fName fAge
+  local fPath fDir fName fAge bAge
 
   fPath="$1"
   fAge="${2:-0}"
 
-  if [ -f "$fPath" ]; then
-    if [[ "$fAge" -gt "0" ]]; then
+  if [[ "$fAge" -gt "0" ]]; then
+    if [ -f "$fPath" ]; then
+      # Use minutes since boot if that's less than $fAge
+      bAge=$(_minutesSinceBoot)
+      [[ "$bAge" -lt "$fAge" ]] && fAge="$bAge"
+      # Delete the file if it's older than fAge in Minutes
       fName=$(/usr/bin/basename "$fPath")
       fDir=$(/usr/bin/dirname "$fPath")
       cd "$fDir" || return 1
@@ -89,7 +103,7 @@ function _updatesMetadataInitFile() {
     fi
   fi
 
-  # Reevaluate Existence; May have been deleted above
+  # Create File If Needed
   if [ ! -f "$fPath" ]; then
     if ! /usr/bin/touch "$fPath"; then
       return 1
