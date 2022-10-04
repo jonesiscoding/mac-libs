@@ -262,6 +262,7 @@ function updates::metadata::get::raw() {
 function updates::metadata::get::pending() {
   local jsonFile jsonCode jsGetPendingList
 
+  updates::metadata::init
   jsonFile=$(updates::metadata::file::updates)
   if [ -f "$jsonFile" ]; then
     jsonCode=$(/bin/cat "$jsonFile")
