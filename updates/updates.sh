@@ -50,14 +50,19 @@ function updates::restart::softwareupdated() {
 #   Public: If a user is present, restarts the Software Update Notification Manager, otherwise restarts softwareupdated.
 # */
 function updates::restart::SoftwareUpdateNotificationManager() {
-  local consoleUserId
+  local cUserId cUser
 
-  consoleUserId=$(/usr/bin/id -u "$(_consoleUser)")
-  if ! /bin/launchctl kickstart -k "gui/$consoleUserId/com.apple.SoftwareUpdateNotificationManager"; then
-		if ! /bin/launchctl kickstart -k "gui/$consoleUserId/com.apple.SoftwareUpdateNotificationManager"; then
-		  return 1
-		fi
-	fi
+  cUser=$(_consoleUser)
+  if [ -n "$cUser" ]; then
+    cUserId=$(/usr/bin/id -u "$cUser")
+    if ! /bin/launchctl kickstart -k "gui/$cUserId/com.apple.SoftwareUpdateNotificationManager"; then
+      if ! /bin/launchctl kickstart -k "gui/$cUserId/com.apple.SoftwareUpdateNotificationManager"; then
+        return 1
+      fi
+    fi
+  elif ! /bin/launchctl kickstart -k system/com.apple.softwareupdated; then
+    return 1
+  fi
 
-	return 0
+  return 0
 }
