@@ -38,6 +38,6 @@ if [ -z "$sourced_lib_core" ]; then
   # Internal Function Dependencies
   #
 
-  # shellcheck source=./_dependencies.sh
-  source "$libsMacSourcePath/_dependencies.sh"
+  # shellcheck source=./_shared.sh
+  source "_shared.sh"
 fi
