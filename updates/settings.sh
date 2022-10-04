@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_updates_settings" ] && return 0
+
 function _getManagedPlistPath() {
   if [ -z "$_libsMacUpdates_Plist" ]; then
     _libsMacUpdates_ManagedPlist="/Library/Managed Preferences/$(updates::settings::domain).plist"
@@ -70,7 +72,7 @@ function updates::settings::workDir() {
 
 if [ -z "$sourced_lib_mac_updates_settings" ]; then
   # shellcheck disable=SC2034
-  sourced_lib_mac_updates_metadata=0
+  sourced_lib_mac_updates_settings=0
 
   #
   # Internal Variables
