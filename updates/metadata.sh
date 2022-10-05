@@ -161,7 +161,7 @@ function updates::metadata::add::downloaded::allPending() {
     const updates = JSON.parse(\`$jsonCode\`);
     var updatesJson = [];
     for (const update of updates) {
-      updatesJson.push(update.Label)
+      updatesJson.push(update.Title)
     }
 
     return updatesJson.join("\n")
