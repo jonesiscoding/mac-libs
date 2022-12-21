@@ -18,11 +18,24 @@
 #     file that was distributed with this source code.
 # */
 
-# Prevent being sourced more than once
+#
+# User/Files Initialization
+#
+
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_files" ] && return 0
+# shellcheck disable=SC2034
+sourced_lib_mac_files=0
+
+# Fallback for the initialization of this variable.
+# Developer should have sourced _core.sh and/or _root.sh already.
+[ -z "$libsMacUser" ] && libsMacUser="${USER}"
 
 
-# /*!
+#
+# User/Files Functions
+#
+
+# /*
 #   Internal: Retrieves the group for the given directory or file
 #
 #   $1 The directory or file to retrieve the group for
@@ -46,7 +59,7 @@ _group() {
   return 1
 }
 
-# /*!
+# /*
 #   Internal: Retrieves the owner for the given directory or file
 #
 #   $1 The directory or file to retrieve the owner for
@@ -70,7 +83,7 @@ _owner() {
   return 1
 }
 
-# /*!
+# /*
 #   Public: Sets the ownership of the given file or directory to the script user.  The script user is defined
 #   in _core.sh or _root.sh. Please see these scripts for details.
 #
@@ -82,30 +95,37 @@ _owner() {
 #     fi
 #
 #   $1 The path to change the ownership of.
+#   $2 Set to 1 to make the ownership change recursive.
 # */
 function user::files::chown() {
-  local OWNER
-  local GROUP
-  local TFILE
+  local owner group tfile recursive cOwn cGrp res
 
-  TFILE="$1"
-  OWNER=$(_owner "/Users/${libsMacUser}")
-  GROUP=$(_group "/Users/${libsMacUser}")
+  tfile="$1"
+  owner=$(_owner "/Users/${libsMacUser}")
+  group=$(_group "/Users/${libsMacUser}")
+  cOwn="/usr/sbin/chown"
+  cGrp="/usr/bin/chgrp"
 
-  if ! /usr/sbin/chown "$OWNER" "$TFILE"; then
-    echo "ERROR: Could not set ownership for '$TFILE'"
+  if [ -d "$tfile" ]; then
+    recursive="$2"
+    if [ "$recursive" -eq "1" ]; then
+      cOwn="${cOwn} -R"
+      cGrp="${cGrp} -R"
+    fi
+  fi
+
+  if ! $cOwn "$owner" "$tfile"; then
     return 1
   fi
 
-  if ! /usr/bin/chgrp "$GROUP" "$TFILE"; then
-    echo "ERROR: Could not set ownership for '$TFILE'"
+  if ! $cGrp "$group" "$tfile"; then
     return 1
   fi
 
   return 0
 }
 
-# /*!
+# /*
 #   Public: Makes the given directory and sets ownership to the user referenced by $libsMacUser. This variable
 #   is defined in _core.sh or _root.sh.  Please see these scripts for details.
 #
@@ -141,7 +161,7 @@ function user::files::mkdir() {
   return 0
 }
 
-# /*!
+# /*
 #   Public: Verifies that the parent directory exists, then touches (or creates) the given file path, changing
 #   ownership to the user referenced by $libsMacUser.
 #
@@ -180,14 +200,3 @@ function user::files::touch() {
 
   return 0
 }
-
-#
-# Internal Variable Initialization
-#
-if [ -z "$sourced_lib_mac_files" ]; then
-  # shellcheck disable=SC2034
-  sourced_lib_mac_files=0
-
-  # Fallback for the initialization of this variable. Developer should have sourced _core.sh and/or _root.sh already.
-  [ -z "$libsMacUser" ] && libsMacUser="${USER}"
-fi

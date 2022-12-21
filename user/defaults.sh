@@ -1,10 +1,18 @@
 #!/bin/bash
 
-# Prevent being sourced more than once
+#
+# Initialize Defaults Module
+#
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_defaults" ] && return 0
+# shellcheck disable=SC2034
+sourced_lib_mac_defaults=0
 
-# shellcheck source=./files.sh
-source "$libsMacSourcePath/user/files.sh"
+# shellcheck source=./files.sh disable=SC2164
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")"; /bin/pwd -P )/files.sh" #inline
+
+#
+# Defaults Functions
+#
 
 function defaults::toBoolean() {
   local inValue trueValue
@@ -83,12 +91,7 @@ function user::defaults::write() {
   PLIST="/Users/${libsMacUser}/Library/Preferences/${DOMAIN}.plist"
 
   /usr/bin/defaults "write" "$PLIST" "$KEY" "$VALUE" || return 1
-  mac::files::user::chown "$PLIST" || return 1
+  user::files::chown "$PLIST" || return 1
 
   return 0
 }
-
-if [ -z "$sourced_lib_mac_defaults" ]; then
-  # shellcheck disable=SC2034
-  sourced_lib_mac_defaults=0
-fi

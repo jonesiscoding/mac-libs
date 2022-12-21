@@ -1,10 +1,17 @@
 #!/bin/bash
 
 #
-# Module Initialization
+# User/Console Initialization
 #
+
+# Prevent sourcing twice
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_user_console" ] && return 0
+# shellcheck disable=SC2034
 sourced_lib_mac_user_console=0
+
+#
+# User/Console Functions
+#
 
 # /*!
 #   Public: Shows the username of the current console user, if any is logged in.
