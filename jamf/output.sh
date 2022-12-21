@@ -20,16 +20,13 @@ function jamf::output::ask() {
   buttonNo="${5:-No}"
   icon="${6:-/Applications/Self Service.app/Contents/Resources/AppIcon.icns}"
 
-  if [ ! -f "$_libsMacJamf_Helper" ]; then
-    # Show error message in logs
-    output::errorln "ERROR: Jamf Helper Not Found!"
+  if [ -f "$_libsMacJamf_Helper" ]; then
+    if "$_libsMacJamf_Helper" -windowType utility -lockHUD -title "$title" -heading "$heading" -description "$question" -icon "$icon" -button1 "$buttonYes" -button2 "$buttonNo" -defaultButton "0" -cancelButton "2"; then
+    return 0
+  fi
   fi
 
-  if "$_libsMacJamf_Helper" -windowType hud -lockHUD -title "$title" -heading "$heading" -description "$question" -icon "$icon" -button1 "$buttonYes" -button2 "$buttonNo" -defaultButton "0" -cancelButton "2"; then
-    return 0
-  else
-    return $?
-  fi
+  return 1
 }
 
 # /*!
@@ -49,14 +46,13 @@ function jamf::output::assert() {
   icon="${4:-/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns}"
   [ ! -f "$icon" ] && icon="$_libsMacJamf_IconDefault"
 
-  if [ ! -f "$_libsMacJamf_Helper" ]; then
-    # Show error message in logs
-    echo "ERROR: Jamf Helper Not Found"
-    return 1
+  if [ -f "$_libsMacJamf_Helper" ]; then
+    "$_libsMacJamf_Helper" -windowType utility -lockHUD -title "$title" -heading "$heading" -description "$message" -icon "$icon" &
+  disown
+    return 0
   fi
 
-  "$_libsMacJamf_Helper" -windowType hud -lockHUD -title "$title" -heading "$heading" -description "$message" -icon "$icon" &
-  disown
+  return 1
 }
 
 # /*!
@@ -69,7 +65,7 @@ function jamf::output::assert() {
 #   $4  Icon Path
 #   $5  Countdown Timeout
 # */
-function jamf::output::countdown() {
+function jamf::output::delay() {
   local heading title message icon timeout
 
   title="$1"
@@ -79,13 +75,12 @@ function jamf::output::countdown() {
   timeout="${5:-300}"
   [ ! -f "$icon" ] && icon="$_libsMacJamf_IconDefault"
 
-  if [ ! -f "$_libsMacJamf_Helper" ]; then
-    # Show error message in logs
-    echo "ERROR: Jamf Helper Not Found"
-    return 1
+  if [ -f "$_libsMacJamf_Helper" ]; then
+    "$_libsMacJamf_Helper" -windowType utility -title "$title" -heading "$heading" -description "$message" -icon "$icon" -button1 "OK" -timeout "$timeout" -windowPosition lr -showDelayOptions "300, 1800, 3600, 60"
+    return 0
   fi
 
-  "$_libsMacJamf_Helper" -windowType hud -lockHUD -title "$title" -heading "$heading" -description "$message" -icon "$icon" -timeout "$timeout" -countdown
+  return 1
 }
 
 # /*!
@@ -105,14 +100,12 @@ function jamf::output::notify() {
   icon="${4:-/Applications/Self Service.app/Contents/Resources/AppIcon.icns}"
   [ ! -f "$icon" ] && icon="$_libsMacJamf_IconDefault"
 
-  if [ ! -f "$_libsMacJamf_Helper" ]; then
-    # Show error message in logs
-    echo "ERROR: Jamf Helper Not Found"
-    return 1
+  if [ -f "$_libsMacJamf_Helper" ]; then
+    "$_libsMacJamf_Helper" -windowType utility -title "$title" -heading "$heading" -description "$message" -icon "$icon" -windowPosition lr -timeout 300 -button1 "Close"
+    return 0
   fi
 
-  "$_libsMacJamf_Helper" -windowType hud -title "$title" -heading "$heading" -description "$message" -icon "$icon" &
-  disown
+    return 1
 }
 
 # /*!
