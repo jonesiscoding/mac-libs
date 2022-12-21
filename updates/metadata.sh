@@ -237,7 +237,7 @@ function updates::metadata::file::installedRaw() {
 }
 
 function updates::metadata::get::raw() {
-  local updatesRaw lines updatePid
+  local updatesRaw lines updatePid suLine suTimeout suFail
 
   updates::metadata::init
   updatesRaw=$(updates::metadata::file::updatesRaw)
@@ -248,6 +248,28 @@ function updates::metadata::get::raw() {
   if [ -z "$lines" ]; then
     /usr/sbin/softwareupdate --list --all > "$updatesRaw" 2>&1 &
     updatePid=$!
+    suTimeout=true
+    suFail=true
+
+    # Credit: https://github.com/Macjutsu/super
+    while read -t 180 -r suLine; do
+      if echo "$suLine" | /usr/bin/grep -q "Can’t connect"; then
+        suTimeout=false
+        break
+      elif echo "$suLine" | /usr/bin/grep -q "Couldn't communicate"; then
+        suTimeout=false
+        break
+      elif echo "$suLine" | /usr/bin/grep -q "Software Update found"; then
+        suTimeout=false
+        suFail=false
+        /usr/bin/wait $updatePid
+        break
+      elif echo "$suLine" | /usr/bin/grep -q "No new software available."; then
+        suTimeout=false
+        suFail=false
+        break
+      fi
+    done < <(/usr/bin/tail -n1 -f "$updatesRaw")
     # shellcheck disable=SC2034
     for i in {1..180}
     do
