@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function jamf::isJamfScript() {
+function jamf::isJamfRun() {
   local cName firstCharFirstArg
   cName=$(/usr/sbin/scutil --get ComputerName)
   firstCharFirstArg=$(/usr/bin/printf '%s' "$1" | /usr/bin/cut -c 1)
