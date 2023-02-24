@@ -11,7 +11,7 @@ function jamf::isJamfRun() {
   fi
 }
 
-if jamf::isJamfScript "$@"; then
+if jamf::isJamfRun "$@"; then
   # shellcheck disable=SC2034
   jamfMountPoint="$1"
   # shellcheck disable=SC2034
