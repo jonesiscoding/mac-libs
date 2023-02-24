@@ -43,7 +43,11 @@ function apps::acrobat::path() {
   fi
 
   if [ "$edition" == "Reader" ] || [ "$edition" == "reader" ] || [ -z "$edition" ]; then
-    aDir="/Applications/Adobe Acrobat Reader DC.app"
+    aDir="/Applications/Adobe Acrobat Reader.app"
+    if [ ! -f "$aDir/Contents/Info.plist" ]; then
+      aDir="/Applications/Adobe Acrobat Reader DC.app"
+    fi
+
     [ -f "$aDir/Contents/Info.plist" ] && echo "$aDir" && return 0
   fi
 
