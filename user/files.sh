@@ -107,7 +107,7 @@ function user::files::chown() {
   cGrp="/usr/bin/chgrp"
 
   if [ -d "$tfile" ]; then
-    recursive="$2"
+    recursive="${2:-0}"
     if [ "$recursive" -eq "1" ]; then
       cOwn="${cOwn} -R"
       cGrp="${cGrp} -R"
