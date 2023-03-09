@@ -3,8 +3,8 @@
 # Prevent being sourced more than once
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_jamf_updates" ] && return 0
 
-# shellcheck source=../output/output.sh
-source "$libsMacSourcePath/output/output.sh"
+# shellcheck source=../output/output.sh disable=SC2164
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/../output/output.sh"
 
 # /*!
 #   Public: Retrieves the URL to the Mac's Jamf Server

@@ -6,7 +6,7 @@
 
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_user" ] && return 0
 # shellcheck source=console.sh
-source "$(/usr/bin/dirname "${BASH_SOURCE[0]}")console.sh"
+source "$(/usr/bin/dirname "${BASH_SOURCE[0]}")/console.sh"
 
 #
 # Module Functions

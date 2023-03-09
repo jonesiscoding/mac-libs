@@ -13,13 +13,12 @@ sourced_lib_updates_metadata=0
 # Sourced Functions
 #
 
-# shellcheck source=./settings.sh
-source "$libsMacSourcePath/updates/settings.sh"
+# shellcheck source=./settings.sh disable=SC2164
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/../output/output.sh"
 
 #
 # Internal Functions
 #
-
 
 function _parseUpdateLine() {
   local in

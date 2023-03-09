@@ -8,8 +8,8 @@ sourced_lib_logs=0
 # Sourced Functions
 #
 
-# shellcheck source=./../updates/metadata.sh
-source "$libsMacSourcePath/updates/metadata.sh"
+# shellcheck source=./../updates/metadata.sh disable=SC2164
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/../updates/metadata.sh"
 
 #
 # Public Functions

@@ -19,8 +19,8 @@
 [ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_question" ] && return 0
 
 if [ -z "$sourced_lib_output" ]; then
-  # shellcheck source=./output.sh
-  source "$libsMacSourcePath/io/output.sh"
+  # shellcheck source=./output.sh disable=SC2164
+  source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/output.sh"
 fi
 
 # /*!

@@ -61,6 +61,6 @@ if [ -z "$sourced_lib_root" ]; then
   # Internal Function Dependencies
   #
 
-  # shellcheck source=./_shared.sh
-  source "$libsMacSourcePath/_shared.sh"
+  # shellcheck source=./_shared.sh disable=SC2164
+  source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/_shared.sh"
 fi
