@@ -14,7 +14,7 @@ sourced_lib_updates_metadata=0
 #
 
 # shellcheck source=./settings.sh disable=SC2164
-source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/../output/output.sh"
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/settings.sh"
 
 #
 # Internal Functions
