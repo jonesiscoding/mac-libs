@@ -269,15 +269,7 @@ function updates::metadata::get::raw() {
         break
       fi
     done < <(/usr/bin/tail -n1 -f "$updatesRaw")
-    # shellcheck disable=SC2034
-    for i in {1..180}
-    do
-      if /bin/ps -p $updatePid >&-; then
-        sleep 1
-      else
-        break;
-      fi
-    done
+
     lines=$(cat "$updatesRaw")
   fi
 
