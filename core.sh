@@ -32,4 +32,4 @@
 [ -z "$libsMacUser" ] && libsMacUser="$USER"
 
 # shellcheck source=./_errors.sh disable=SC2164
-source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/errors.sh"
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/_errors.sh"
