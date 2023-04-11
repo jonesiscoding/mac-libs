@@ -1,43 +1,35 @@
 #!/bin/bash
 
-# Prevent being sourced more than once
-[ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_core" ] && return 0
+# /*
+#   Library:
+#     The mac-libs library contains functionality to ease repeated needs in macOS management scripts.
+#
+#   Usage:
+#     Usage depends on how scripts are run; the stub you source can change which user the functions interact with.
+#
+#     This stub is for scripts run as the shell user:
+#
+#       * All user functions will automatically use the $USER environment variable.
+#       * Includes various 'error::xxx' functions.
+#
+#     For scripts intended to interact with a different user, or run via Jamf Pro, see "root.sh" or "jamf.sh"
+#
+#   Example:
+#
+#       source "<path-to-os-libs>/core.sh"
+#       source "<path-to-os-libs>/other/lib/script.sh"
+#
+#   Library Copyright:
+#     © 2022/09 AMJones <am@jonesiscoding.com>
+#
+#     Some code attributable to other sources and offers.  See comments in specific functions.
+#
+#   License:
+#     For the full copyright and license information, please view the LICENSE
+#     file that was distributed with this source code.
+# */
 
-if [ -z "$sourced_lib_core" ]; then
-  # shellcheck disable=SC2034
-  sourced_lib_core=0
+[ -z "$libsMacUser" ] && libsMacUser="$USER"
 
-  #
-  # Global Variables
-  #
-
-  # Source Path for Mac-Libs Library
-  if [ -z "$libsMacSourcePath" ]; then
-    # shellcheck disable=SC2164,SC2034
-    libsMacSourcePath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )"
-  fi
-
-  # Paths to search for dependencies if the dependency isn't in the path
-  if [ ${#libsMacBinPaths[@]} -eq 0 ]; then
-    libsMacBinPaths=("/usr/local/sbin" "/usr/local/bin" "/opt/homebrew/sbin" "/opt/homebrew/bin")
-  fi
-
-  # The user referenced in all user functions (Note: This sets differently if sourcing "root.sh")
-  if [ -z "$libsMacUser" ]; then
-    libsMacUser="${USER}"
-  fi
-
-  #
-  # Internal Variables
-  #
-
-  # All previously located executables
-  _libsMacCore_Bin=()
-
-  #
-  # Internal Function Dependencies
-  #
-
-  # shellcheck source=./_shared.sh
-  source "_shared.sh"
-fi
+# shellcheck source=./_errors.sh disable=SC2164
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/errors.sh"

@@ -1,66 +1,47 @@
 #!/bin/bash
 
-# Prevent being sourced more than once
-[ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_root" ] && return 0
+# /*
+#   Library:
+#     The mac-libs library contains functionality to ease repeated needs in macOS management scripts.
+#
+#   Usage:
+#     Usage depends on how scripts are run; the stub you source can change which user the functions interact with.
+#
+#     This stub is for scripts run as root, but intended to use a different user for various user functions.
+#
+#       * Includes the 'user::init <username>' function to set the specific user.
+#       * Includes the 'user::init::console' function to set the user from the console.
+#       * Includes various 'error::xxx' functions.
+#
+#     For scripts intended to interact with the user running the script, or run via Jamf Pro, see "core.sh" or "jamf.sh"
+#
+#   Example:
+#
+#       source "<path-to-os-libs>/root.sh"
+#       source "<path-to-os-libs>/other/lib/script.sh"
+#       user::init::console
+#
+#   Library Copyright:
+#     © 2022/09 AMJones <am@jonesiscoding.com>
+#
+#     Some code attributable to other sources and offers.  See comments in specific functions.
+#
+#   License:
+#     For the full copyright and license information, please view the LICENSE
+#     file that was distributed with this source code.
+# */
 
-function core::isJamf() {
-  local cName firstCharFirstArg
+# shellcheck source=./_errors.sh disable=SC2164
+source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/errors.sh"
 
-  if [ "$_libsMacCore_IsJamf" == ":::_:::" ]; then
-    _libsMacCore_IsJamf=1
-    cName=$(/usr/sbin/scutil --get ComputerName)
-    firstCharFirstArg=$(/usr/bin/printf '%s' "$1" | /usr/bin/cut -c 1)
-
-    if [ "$firstCharFirstArg" == "/" ] && [ "$2" == "$cName" ]; then
-      _libsMacCore_IsJamf=0
-    fi
-  fi
-
-  return $_libsMacCore_IsJamf
+function user::init::console() {
+  libsMacUser=$(echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }')
 }
 
-#
-# Library Initialization
-#
-if [ -z "$sourced_lib_root" ]; then
-  # shellcheck disable=SC2034
-  sourced_lib_root=0
+function user::init::script() {
+  libsMacUser="$USER"
+}
 
-  #
-  # Global Variables
-  #
-
-  # Source Path for Mac-Libs Library
-  if [ -z "$libsMacSourcePath" ]; then
-    # shellcheck disable=SC2164,SC2034
-    libsMacSourcePath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )"
-  fi
-
-  # Paths to search for dependencies if the dependency isn't in the path
-  if [ ${#libsMacBinPaths[@]} -eq 0 ]; then
-    libsMacBinPaths=("/usr/local/sbin" "/usr/local/bin" "/opt/homebrew/sbin" "/opt/homebrew/bin")
-  fi
-
-  # The user referenced in all user functions
-  if [ -z "$libsMacUser" ] || [ "$libsMacUser" == "$USER" ]; then
-    # Set User Based on Jamf or Console User
-    if core::isJamf "$@"; then
-      libsMacUser="$3"
-    else
-      libsMacUser=$(echo "show State:/Users/ConsoleUser" | /usr/sbin/scutil | /usr/bin/awk '/Name :/ && ! /loginwindow/ { print $3 }')
-    fi
-  fi
-
-  #
-  # Internal Variables
-  #
-
-  _libsMacCore_IsJamf=":::_:::"
-
-  #
-  # Internal Function Dependencies
-  #
-
-  # shellcheck source=./_shared.sh disable=SC2164
-  source "$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/_shared.sh"
-fi
+function user::init() {
+  libsMacUser="$1"
+}
