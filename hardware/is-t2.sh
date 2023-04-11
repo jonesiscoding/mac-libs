@@ -10,7 +10,7 @@
 #       <code to run if the does not use a T2 Chip>
 #     fi
 # */
-function hardware::chip::isT2() {
+function hardware::isT2() {
   local arch
 
   arch=$(/usr/bin/arch)
