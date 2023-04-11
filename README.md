@@ -1,35 +1,36 @@
 # mac-libs
-A library of common reusable bash functions to assist in the management of macOS computers.
+A library of common reusable bash functions, with 0 non-native dependencies, to assist in the management of macOS computers.
+
+While all the functionality can be replicated within macOS itself, there are two advantages to using the library:
+
+* Less code to touch if the method to do something in macOS changes.
+* Less remembering (or searching for) obscure macOS utilities, flags, and filters. 
 
 ### Usage
 
-1. Source `core.sh` using a relative path.  See note below for scripts designed to be run as root.
-2. Source other modules as you see fit, based on your needs.  You may use the variable `$libsMacSourcePath` for the path to the library, if desired.
+* Source one of the stub files below, depending on how your script to be run.
+* Source each of the function files that contain the functions you want to use.  
+  * Internal dependencies are taken care of automatically.
+  * See individual function files for arguments & additional notes.
+* If using `jamf.sh` or `root.sh`, initialize the user with one of the `user::init` functions.
 
-#### For Scripts Run as Root
+#### Stub Files
 
-For scripts where the functionality is designed to be run as root or other admin user, but should affect the current console user, or another user passed via MDM, you should source `root.sh` to ensure that the user functions are run for the correct user.
+| File      | For                                             | Effects                                                                 |
+|-----------|-------------------------------------------------|-------------------------------------------------------------------------|
+| `core.sh` | Scripts run as shell user                       | User functions automatically run on $USER                               |
+| `root.sh` | Scripts run as root, affecting a different user | Must call `user::init <username>` or `user::init::console` to set user. |
+| `jamf.sh` | Scripts run via Jamf Pro | * User functions automaticaly run on username supplied by Jamf as $3.<br>* `$jamfUser` automatically set to `$3`<br>* `$jamfHost` automatically set to `$2<br>* `$jamfRoot` automatically set to `$1`<br>* All arguments shifted, $4 becomes $1 |
 
-### User Reference
 
-All functions based on user information in this library run on a specific _reference user_, identified at run time.
+### User Functions
 
-During normal usage, the reference user will the user running the script.
+All functions based on user information in this library run on a specific _reference user_, based on the chosen sub file (see above) and the `user::init` function used.
 
-If sourcing `root.sh` to indicate that your script is intended to run as _root_, the reference user is auto-detected based on:
+### Optional Installer Script
 
-1. If the script is running via Jamf Pro, the reference user is taken from the Jamf Pro arguments.
-2. The user currently logged into the GUI console.
+If your script is running as root, you can silently install the library using the 1-liner below:
 
-### Jamf Setup
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/jonesiscoding/mac-libs/HEAD/bin/install.sh)" || exit 1
 
-To properly use the Jamf functions for downloading or installing updates on an MDM enrolled machine, you must first configure a few things.  These steps are _only_ needed if using the update functionality in the `_jamf.sh` module.
-
-1. Create a user in Jamf with the proper permissions, only allowing for access via the API.
-2. Set up a configuration profile using the `resources/jamfProfile.json` schema.
-3. Store that user's password in the keychain of each computer that will be running the script.  This may be automated in Jamf.
-
-To store the password in the keychain as described in step two above:
-
-`security add-generic-password -a "<username>" -s "MDM API" -w "<password>" -T /usr/bin/security /Library/Keychains/System.keychain`
-  
+The installer will check this repo for the most recent release, then if needed, download & extract to `/usr/local/sbin/lib/mac-libs/`.
