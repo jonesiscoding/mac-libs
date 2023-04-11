@@ -3,6 +3,7 @@
 # /*
 #   Module:
 #     Contains functions to ease the retrieval of information about the content cache serving this Mac.
+#     Deprecated in favor of individual files.
 #
 #   Example:
 #     source "<path-to-os-libs>/os/cache.sh"
@@ -16,54 +17,16 @@
 #     file that was distributed with this source code.
 # */
 
-# Prevent being sourced more than once
-[ "${BASH_SOURCE[0]}" != "$0" ] && [ -n "$sourced_lib_mac_cache" ] && return 0
-
-# /*!
-#   Internal: Retrieves the IP addresses of the given type of asset cache.
-#
-#   $1 The type of cache to query for; shared or personal.
+# /*
+#   Module:
+#     Contains functions for reading macOS network settings & particulars.
+#     Deprecated in favor of individual function files.
 # */
-function _getAssetCacheLocators() {
-  local DATA
 
-  DATA=$(/usr/bin/AssetCacheLocatorUtil 2>&1)
+# shellcheck disable=SC2164
+fnPath="$( cd "$(/usr/bin/dirname "${BASH_SOURCE[0]}")" ; /bin/pwd -P )/cache"
 
-  echo "$DATA" | /usr/bin/grep guid | /usr/bin/grep "$1 caching: yes" | /usr/bin/awk '{print$4}' | /usr/bin/cut -d ':' -f1 | /usr/bin/uniq
-}
-
-# /*!
-#   Public: Retrieves IP addresses of any personal asset cache this Mac is utilizing. The value is then cached to
-#   prevent additional overhead when using the function repeatedly.
-#
-#   Example:
-#     cacheIPs=$(os::os::cache::personal)
-# */
-function os::cache::personal() {
-  [ -z "$_libsMacCache_Personal" ] && _libsMacCache_Personal=$(_getAssetCacheLocators "personal")
-  echo "$_libsMacCache_Personal"
-}
-
-# /*!
-#   Public: Retrieves IP addresses of any shared asset cache this Mac is utilizing. The value is then cached to prevent
-#   additional overhead when using the function repeatedly.
-#
-#   Example:
-#     cacheIPs=$(os::os::cache::shared)
-# */
-function os::cache::shared() {
-  [ -z "$_libsMacCache_Shared" ] && _libsMacCache_Shared=$(_getAssetCacheLocators "shared")
-  echo "$_libsMacCache_Shared"
-}
-
-#
-# Initialization Code
-#
-if [ -z "$sourced_lib_mac_cache" ]; then
-  # shellcheck disable=SC2034
-  sourced_lib_mac_cache=0
-
-  # Internal Variables
-  _libsMacCache_Personal=""
-  _libsMacCache_Shared=""
-fi
+# shellcheck source=./cache/personal.sh
+source "$fnPath/personal.sh"
+# shellcheck source=./cache/shared.sh
+source "$fnPath/shared.sh"
