@@ -1,10 +1,25 @@
 #!/bin/bash
 
+## region ############################################## Destination
+
+# Allow setting of destination via prefix, verify that it's writable
+[ -z "$MACLIBS_PREFIX" ] && MACLIBS_PREFIX="/usr/local/sbin"
+if [ ! -w "$MACLIBS_PREFIX" ]; then
+  userDir=$(/usr/bin/dscl . -read /Users/"$USER" NFSHomeDirectory 2>/dev/null | /usr/bin/awk -F ': ' '{print $2}')
+  if [ -z "$userDir" ] && [ -d "/Users/$USER/Desktop" ]; then
+    userDir="/Users/$USER/Desktop"
+  fi
+  MACLIBS_PREFIX="$userDir/.local/sbin"
+fi
+destDir="${MACLIBS_PREFIX}/libs/mac-libs"
+
+## endregion ########################################### End Destination
+
+## region ############################################## Main Code
+
 installed=""
-isReplace=false
-destDir="/usr/local/sbin/mac-libs"
 if [ -d "$destDir" ]; then
-  if [ -f "/usr/local/sbin/mac-libs/.version" ]; then
+  if [ -f "$destDir/.version" ]; then
     installed=$(cat "$destDir/.tag")
     if [ "$1" == "--replace" ]; then
       installed=""
@@ -24,7 +39,7 @@ if [ -n "$tag" ]; then
   [ "$tag" == "$installed" ] && exit 0
   dlUrl="https://github.com/jonesiscoding/mac-libs/archive/refs/tags/${tag}.zip"
   repoFile=$(basename "$dlUrl")
-  tmpDir="/tmp/mac-libs/${tag}"
+  tmpDir="/private/tmp/mac-libs/${tag}"
   [ -d "$tmpDir" ] && rm -R "$tmpDir"
   if mkdir -p "$tmpDir"; then
     if curl -Ls -o "$tmpDir/$repoFile" "$dlUrl"; then
@@ -32,8 +47,9 @@ if [ -n "$tag" ]; then
       if unzip -qq "$tmpDir/$repoFile"; then
         rm "$tmpDir/$repoFile"
         [ -d "$tmpDir/bin" ] && rm -R "${tmpDir:?}/bin"
-        if cp -R "$tmpDir/mac-libs-${tag//v/}/" "/usr/local/sbin/lib/mac-libs/"; then
+        if cp -R "$tmpDir/mac-libs-${tag//v/}/" "$destDir/"; then
           rm -R "$tmpDir"
+          # Success - Exit Gracefully
           exit 0
         fi
       fi
@@ -41,4 +57,7 @@ if [ -n "$tag" ]; then
   fi
 fi
 
+# All Paths that lead here indicate we couldn't install
 exit 1
+
+## endregion ########################################### End Main Code
