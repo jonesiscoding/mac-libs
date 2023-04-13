@@ -20,7 +20,7 @@ destDir="${MACLIBS_PREFIX}/libs/mac-libs"
 installed=""
 if [ -d "$destDir" ]; then
   if [ -f "$destDir/.version" ]; then
-    installed=$(cat "$destDir/.tag")
+    installed=$(cat "$destDir/.version")
     if [ "$1" == "--replace" ]; then
       installed=""
       rm -R "$destDir"
