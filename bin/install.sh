@@ -11,7 +11,7 @@ if [ ! -w "$MACLIBS_PREFIX" ]; then
   fi
   MACLIBS_PREFIX="$userDir/.local/sbin"
 fi
-destDir="${MACLIBS_PREFIX}/libs/mac-libs"
+destDir="${MACLIBS_PREFIX}/lib/mac-libs"
 
 ## endregion ########################################### End Destination
 
