@@ -1,6 +1,6 @@
 {
   "name": "mac-libs",
-  "version": "0.1.0",
+  "version": "2.1",
   "description": "Bash libraries for macOS administration scripts.",
   "global": true,
   "install": "mkdir -p ${PREFIX:-/usr/local}/sbin/lib && rsync -a --ignore-times --delete --exclude='.git' --exclude='bpkg.json' --exclude='resources/' $(pwd)/ ${PREFIX:-/usr/local}/sbin/lib/mac-libs/"
