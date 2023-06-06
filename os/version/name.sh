@@ -33,6 +33,7 @@ function os::version::name() {
   [ "$MAJOR" -eq "11" ] && echo "Big Sur" && return 0
   [ "$MAJOR" -eq "12" ] && echo "Monterey" && return 0
   [ "$MAJOR" -eq "13" ] && echo "Ventura" && return 0
+  [ "$MAJOR" -eq "14" ] && echo "Sonoma" && return 0
 
   echo "Unknown" && return 0
 }
