@@ -29,6 +29,7 @@ function os::version::name() {
     12.* )   echo "Monterey" && return 0       ;;
     13.* )   echo "Ventura" && return 0        ;;
     14.* )   echo "Sonoma" && return 0         ;;
+    15.* )   echo "Sequoia" && return 0         ;;
     * )      echo "Unknown" && return 1        ;;
   esac
 }
