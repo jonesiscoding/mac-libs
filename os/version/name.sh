@@ -18,7 +18,7 @@ function os::version::name() {
     10.6.* ) echo "Snow Leopard" && return 0   ;;
     10.7.* ) echo "Lion" && return 0           ;;
     10.8.* ) echo "Mountain Lion" && return 0  ;;
-    10.9* ) echo "Mavericks" && return 0       ;;
+    10.9* )  echo "Mavericks" && return 0       ;;
     10.10* ) echo "Yosemite" && return 0       ;;
     10.11* ) echo "El Capitan" && return 0     ;;
     10.12* ) echo "Sierra" && return 0         ;;
@@ -30,6 +30,7 @@ function os::version::name() {
     13.* )   echo "Ventura" && return 0        ;;
     14.* )   echo "Sonoma" && return 0         ;;
     15.* )   echo "Sequoia" && return 0         ;;
+    26.* )   echo "Tahoe" && return 0         ;;
     * )      echo "Unknown" && return 1        ;;
   esac
 }
